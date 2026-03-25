@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人学习助手</title>
+    <title>🌿干草成长日志🌿</title>
     <style>
+        /* 全局样式 */
         * {
             margin: 0;
             padding: 0;
@@ -12,140 +13,229 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1a1a1a;
-            color: #e0e0e0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
             line-height: 1.6;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
 
+        /* 主容器 */
         .container {
-            display: grid;
-            grid-template-areas:
-                "header header"
-                "todo resources";
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto 1fr;
-            gap: 20px;
-            padding: 20px;
-            height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+            min-height: 100vh;
         }
 
+        /* 头部 */
         header {
-            grid-area: header;
             text-align: center;
-            padding: 20px;
-            background-color: #252525;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+        }
+
+        header:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
         }
 
         h1 {
-            color: #4CAF50;
-            font-size: 24px;
+            font-family: 'KaiTi', '楷体', serif;
+            color: #3498db;
+            font-size: 32px;
             margin-bottom: 10px;
-        }
-
-        .todo-section {
-            grid-area: todo;
-            background-color: #252525;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            overflow-y: auto;
-        }
-
-        .resources-section {
-            grid-area: resources;
-            background-color: #252525;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            overflow-y: auto;
+            font-weight: 700;
         }
 
         h2 {
-            color: #4CAF50;
+            font-family: 'KaiTi', '楷体', serif;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-family: 'KaiTi', '楷体', serif;
+            color: #34495e;
             margin-bottom: 15px;
             font-size: 18px;
         }
 
+        /* 网格布局 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(15px);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+            border-color: rgba(52, 152, 219, 0.3);
+        }
+
+        /* 输入区域 */
         .input-group {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
-        input[type="text"], input[type="url"], select {
+        input[type="text"], input[type="url"], input[type="datetime-local"], select, input[type="number"] {
             flex: 1;
-            padding: 10px;
-            border: 1px solid #333;
-            border-radius: 4px;
-            background-color: #333;
-            color: #e0e0e0;
+            min-width: 160px;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: #fff;
+            color: #333;
             font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
-        input[type="text"]:focus, input[type="url"]:focus, select:focus {
+        input[type="text"]:focus, input[type="url"]:focus, input[type="datetime-local"]:focus, select:focus, input[type="number"]:focus {
             outline: none;
-            border-color: #4CAF50;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15), 0 4px 12px rgba(52, 152, 219, 0.1);
+            transform: translateY(-2px);
         }
 
+        /* 按钮样式 */
         button {
-            padding: 10px 15px;
+            padding: 14px 24px;
             border: none;
-            border-radius: 4px;
-            background-color: #4CAF50;
+            border-radius: 10px;
+            background-color: #3498db;
             color: white;
             cursor: pointer;
             font-size: 14px;
-            transition: background-color 0.3s;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
         }
 
-        button.delete {
-            background-color: #f44336;
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
         }
 
-        button.delete:hover {
-            background-color: #da190b;
+        button.secondary {
+            background-color: #95a5a6;
+            box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3);
         }
 
-        button.edit {
-            background-color: #ff9800;
+        button.secondary:hover {
+            background-color: #7f8c8d;
+            box-shadow: 0 6px 16px rgba(149, 165, 166, 0.4);
         }
 
-        button.edit:hover {
-            background-color: #e68a00;
+        button.danger {
+            background-color: #e74c3c;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
         }
 
-        ul {
+        button.danger:hover {
+            background-color: #c0392b;
+            box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4);
+        }
+
+        button.success {
+            background-color: #2ecc71;
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+        }
+
+        button.success:hover {
+            background-color: #27ae60;
+            box-shadow: 0 6px 16px rgba(46, 204, 113, 0.4);
+        }
+
+        /* 待办事项样式 */
+        .todo-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            grid-column: 1 / -1;
+            margin-bottom: 30px;
+        }
+
+        .todo-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(15px);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .todo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+            border-color: rgba(52, 152, 219, 0.3);
+        }
+
+        .todo-list {
             list-style: none;
-        }
-
-        li {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #333;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        li:hover {
-            background-color: #3a3a3a;
-        }
-
-        li.completed {
-            background-color: #2a2a2a;
-            text-decoration: line-through;
-            color: #888;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
         .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 12px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .todo-item:hover {
+            background-color: #e3f2fd;
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .todo-item.completed {
+            background-color: #e8f5e8;
+            border-left-color: #2ecc71;
+            text-decoration: line-through;
+            color: #7f8c8d;
+        }
+
+        .todo-content {
             flex: 1;
         }
 
@@ -154,18 +244,197 @@
             gap: 5px;
         }
 
+        /* DDL日历样式 */
+        .ddl-section {
+            grid-column: 1 / -1;
+        }
+
+        .ddl-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .calendar-small {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar-header {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .calendar-weekday {
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #7f8c8d;
+            padding: 8px;
+        }
+
+        .calendar-day-small {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding: 8px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .calendar-day-small:hover {
+            background: #e3f2fd;
+            transform: scale(1.1);
+        }
+
+        .calendar-day-small.today {
+            background: #bbdefb;
+            font-weight: bold;
+        }
+
+        .calendar-day-small.has-ddl {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .calendar-day-small .date-number {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .calendar-day-small .ddl-info {
+            font-size: 10px;
+            line-height: 1.2;
+            color: #c62828;
+            margin-top: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        /* 专注功能样式 */
+        .focus-section {
+            text-align: center;
+        }
+
+        .focus-timer {
+            font-size: 56px;
+            font-weight: bold;
+            color: #3498db;
+            margin: 25px 0;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .focus-timer:hover {
+            transform: scale(1.05);
+            text-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+        }
+
+        .focus-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .focus-settings {
+            margin-top: 20px;
+        }
+
+        .focus-stats {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .focus-chart {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            min-height: 200px;
+        }
+
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 150px;
+            padding: 10px 0;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, #3498db, #64b5f6);
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .chart-bar:hover {
+            background: linear-gradient(to top, #2980b9, #42a5f5);
+            transform: scaleY(1.05);
+        }
+
+        .chart-bar-label {
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            color: #7f8c8d;
+        }
+
+        /* 学习资源样式 */
+       
+        .resource-section {
+            text-align: center;
+        }
+       
+        .resource-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
         .resource-item {
             display: flex;
-            align-items: center;
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #333;
-            border-radius: 4px;
-            transition: background-color 0.3s;
+            align-items: flex-start;
+            padding: 15px;
+            margin-bottom: 12px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .resource-item:hover {
-            background-color: #3a3a3a;
+            background-color: #e3f2fd;
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         }
 
         .resource-info {
@@ -175,120 +444,192 @@
         .resource-title {
             font-weight: bold;
             margin-bottom: 5px;
+            color: #2c3e50;
         }
 
         .resource-url {
             font-size: 12px;
-            color: #888;
+            color: #7f8c8d;
             margin-bottom: 5px;
+            word-break: break-all;
         }
 
-        .resource-category {
+        .resource-platform {
             font-size: 10px;
-            background-color: #4CAF50;
+            background-color: #3498db;
             color: white;
             padding: 2px 6px;
             border-radius: 10px;
+            display: inline-block;
         }
 
-        .resource-actions {
+        /* 鸡汤模块样式 */
+        .motivation-section {
+            text-align: center;
+        }
+
+        .motivation-content {
+            font-family: 'KaiTi', '楷体', serif;
+            font-size: 18px;
+            line-height: 1.8;
+            margin: 25px 0;
+            color: #2c3e50;
+            min-height: 120px;
             display: flex;
-            gap: 5px;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e3f2fd 100%);
+            border-radius: 12px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
         }
 
-        a {
-            color: #4CAF50;
-            text-decoration: none;
+        .motivation-content:hover {
+            transform: scale(1.02);
+            box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
-        a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-areas:
-                    "header"
-                    "todo"
-                    "resources";
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto 1fr;
-                height: auto;
-                padding: 10px;
-            }
-            
-            .input-group {
-                flex-direction: column;
-            }
-            
-            button {
-                padding: 12px;
-                font-size: 16px;
-            }
-            
-            input[type="text"], input[type="url"], select {
-                padding: 12px;
-                font-size: 16px;
-            }
-            
-            li {
-                padding: 12px;
-            }
-        }
-        
+        /* 数据同步样式 */
         .sync-section {
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 1px solid #333;
+            border-top: 1px solid #e0e0e0;
         }
-        
+
         .sync-buttons {
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
+            flex-wrap: wrap;
         }
-        
+
         textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #333;
-            border-radius: 4px;
-            background-color: #333;
-            color: #e0e0e0;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #333;
             font-size: 14px;
             resize: vertical;
             min-height: 100px;
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 10px;
         }
-        
+
+        /* 通知样式 */
         .notification {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 15px;
-            border-radius: 4px;
+            bottom: 30px;
+            right: 30px;
+            padding: 18px 24px;
+            border-radius: 12px;
             color: white;
             font-size: 14px;
+            font-weight: 500;
             z-index: 1000;
-            animation: slideIn 0.3s ease-out;
+            animation: slideIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
         }
-        
+
         .success {
-            background-color: #4CAF50;
+            background-color: #2ecc71;
         }
-        
+
         .error {
-            background-color: #f44336;
+            background-color: #e74c3c;
         }
-        
+
+        .info {
+            background-color: #3498db;
+        }
+
         @keyframes slideIn {
             from {
-                transform: translateX(100%);
+                transform: translateX(100%) translateY(20px);
                 opacity: 0;
             }
             to {
-                transform: translateX(0);
+                transform: translateX(0) translateY(0);
                 opacity: 1;
+            }
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .grid-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .todo-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+                padding: 16px;
+                font-size: 16px;
+            }
+
+            .focus-timer {
+                font-size: 40px;
+            }
+
+            .focus-controls {
+                flex-direction: column;
+            }
+
+            header {
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .calendar-small {
+                gap: 4px;
+                padding: 10px;
+            }
+
+            .calendar-day-small {
+                padding: 4px;
+                font-size: 12px;
+            }
+
+            .calendar-day-small .ddl-info {
+                font-size: 8px;
             }
         }
     </style>
@@ -296,65 +637,210 @@
 <body>
     <div class="container">
         <header>
-            <h1>个人学习助手</h1>
+            <h1>干草成长日志</h1>
         </header>
 
+        <!-- 待办事项功能 -->
         <div class="todo-section">
-            <h2>待办事项</h2>
-            <div class="input-group">
-                <input type="text" id="todo-input" placeholder="添加新任务...">
-                <button onclick="addTodo()">添加</button>
+            <div class="todo-card">
+                <h2>今日待办</h2>
+                <div class="input-group">
+                    <input type="text" id="todo-input" placeholder="添加新任务...">
+                    <button onclick="addTodo()">添加</button>
+                </div>
+                <ul class="todo-list" id="todo-list">
+                    <!-- 待办事项将通过JavaScript动态生成 -->
+                </ul>
             </div>
-            <ul id="todo-list"></ul>
+            <div class="todo-card">
+                <h2>长期待办</h2>
+                <div class="input-group">
+                    <input type="text" id="long-todo-input" placeholder="添加长期任务...">
+                    <button onclick="addLongTodo()">添加</button>
+                </div>
+                <ul class="todo-list" id="long-todo-list">
+                    <!-- 长期待办事项将通过JavaScript动态生成 -->
+                </ul>
+            </div>
         </div>
 
-        <div class="resources-section">
-            <h2>学习资源</h2>
-            <div class="input-group">
-                <input type="text" id="resource-name" placeholder="资源名称...">
-                <input type="url" id="resource-url" placeholder="网址...">
-                <select id="resource-category">
-                    <option value="编程">编程</option>
-                    <option value="数学">数学</option>
-                    <option value="英语">英语</option>
-                    <option value="其他">其他</option>
-                </select>
-                <button onclick="addResource()">添加</button>
+        <div class="grid-container">
+            <!-- 专注功能 -->
+            <div class="card focus-section">
+                <h2>专注</h2>
+                <div class="focus-timer" id="focus-timer">00:00:00</div>
+                <div class="focus-controls">
+                    <button onclick="startFocus()">开始</button>
+                    <button onclick="pauseFocus()">暂停</button>
+                    <button onclick="resetFocus()">重置</button>
+                </div>
+                <div class="focus-settings">
+                    <div class="input-group">
+                        <input type="number" id="focus-duration" placeholder="倒计时分钟" min="1" max="120">
+                        <button onclick="setFocusDuration()">设置</button>
+                    </div>
+                </div>
+                <div class="focus-stats">
+                    <h3>专注统计</h3>
+                    <div id="focus-stats">
+                        <!-- 统计数据将通过JavaScript动态生成 -->
+                    </div>
+                    <div class="focus-chart">
+                        <h4>近30天专注时长</h4>
+                        <div class="chart-container" id="focus-chart">
+                            <!-- 图表将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
             </div>
-            <ul id="resource-list"></ul>
-            
+
+            <!-- 学习资源功能 -->
+            <div class="card">
+                <h2>学习资源</h2>
+                <div class="input-group">
+                    <input type="text" id="resource-name" placeholder="资源名称...">
+                    <input type="url" id="resource-url" placeholder="网址...">
+                    <select id="resource-platform">
+                        <option value="公众号">公众号</option>
+                        <option value="小红书">小红书</option>
+                        <option value="b站">b站</option>
+                        <option value="其他">其他</option>
+                    </select>
+                    <button onclick="addResource()">添加</button>
+                </div>
+                <ul class="resource-list" id="resource-list">
+                    <!-- 学习资源将通过JavaScript动态生成 -->
+                </ul>
+            </div>
+
+            <!-- 鸡汤模块 -->
+            <div class="card motivation-section">
+                <h2>浇灌干草</h2>
+                <div class="motivation-content" id="motivation-content">
+                    <!-- 鸡汤内容将通过JavaScript动态生成 -->
+                </div>
+                <div class="input-group">
+                    <input type="text" id="motivation-input" placeholder="添加自己的鼓励...">
+                    <button onclick="addMotivation()">添加</button>
+                    <button onclick="refreshMotivation()">刷新</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DDL日历 -->
+        <div class="card ddl-section">
+            <h2>重要DDL</h2>
+            <div class="ddl-controls">
+                <button class="secondary" onclick="changeMonth(-1)">&lt; 上月</button>
+                <div id="current-month" style="font-weight: bold; min-width: 120px; text-align: center;"></div>
+                <button class="secondary" onclick="changeMonth(1)">下月 &gt;</button>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <input type="text" id="ddl-title" placeholder="DDL标题">
+                    <input type="datetime-local" id="ddl-time" placeholder="DDL时间">
+                    <button onclick="addDDL()">添加DDL</button>
+                </div>
+            </div>
+            <div class="calendar-small" id="ddl-calendar">
+                <!-- 日历将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <!-- 数据同步 -->
+        <div class="card">
+            <h2>数据管理</h2>
             <div class="sync-section">
-                <h3>数据同步</h3>
                 <div class="sync-buttons">
                     <button onclick="exportData()">导出数据</button>
-                    <button onclick="importData()">导入数据</button>
                 </div>
                 <textarea id="data-export" placeholder="导出的数据将显示在这里..."></textarea>
-                <button onclick="copyData()">复制数据</button>
-                <button onclick="clearData()">清空所有数据</button>
+                <div class="sync-buttons">
+                    <button onclick="copyData()">复制数据</button>
+                    <button class="danger" onclick="clearData()">清空所有数据</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // 数据存储键名
+        const STORAGE_KEYS = {
+            todos: 'learning_assistant_todos',
+            longTodos: 'learning_assistant_long_todos',
+            ddls: 'learning_assistant_ddls',
+            resources: 'learning_assistant_resources',
+            focusStats: 'learning_assistant_focus_stats',
+            focusHistory: 'learning_assistant_focus_history',
+            motivations: 'learning_assistant_motivations'
+        };
+
+        // 初始化数据
+        function initData() {
+            // 初始化待办事项
+            if (!localStorage.getItem(STORAGE_KEYS.todos)) {
+                localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify([]));
+            }
+            
+            // 初始化长期待办事项
+            if (!localStorage.getItem(STORAGE_KEYS.longTodos)) {
+                localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify([]));
+            }
+            
+            // 初始化DDL
+            if (!localStorage.getItem(STORAGE_KEYS.ddls)) {
+                localStorage.setItem(STORAGE_KEYS.ddls, JSON.stringify([]));
+            }
+            
+            // 初始化学习资源
+            if (!localStorage.getItem(STORAGE_KEYS.resources)) {
+                localStorage.setItem(STORAGE_KEYS.resources, JSON.stringify([]));
+            }
+            
+            // 初始化专注统计
+            if (!localStorage.getItem(STORAGE_KEYS.focusStats)) {
+                localStorage.setItem(STORAGE_KEYS.focusStats, JSON.stringify({
+                    today: 0,
+                    average30Days: 0
+                }));
+            }
+            
+            // 初始化专注历史
+            if (!localStorage.getItem(STORAGE_KEYS.focusHistory)) {
+                localStorage.setItem(STORAGE_KEYS.focusHistory, JSON.stringify([]));
+            }
+            
+            // 初始化鸡汤
+            if (!localStorage.getItem(STORAGE_KEYS.motivations)) {
+                const defaultMotivations = [
+                    "学而时习之，不亦说乎？",
+                    "温故而知新，可以为师矣。",
+                    "学而不思则罔，思而不学则殆。",
+                    "知之者不如好之者，好之者不如乐之者。",
+                    "三人行，必有我师焉。择其善者而从之，其不善者而改之。"
+                ];
+                localStorage.setItem(STORAGE_KEYS.motivations, JSON.stringify(defaultMotivations));
+            }
+        }
+
         // 待办事项功能
         function loadTodos() {
-            const todos = JSON.parse(localStorage.getItem('todos')) || [];
+            const todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
             const todoList = document.getElementById('todo-list');
             todoList.innerHTML = '';
             
             todos.forEach((todo, index) => {
-                const li = document.createElement('li');
-                li.className = todo.completed ? 'completed' : '';
-                li.innerHTML = `
-                    <div class="todo-item">${todo.text}</div>
-                    <div class="todo-actions">
-                        <button onclick="toggleTodo(${index})">${todo.completed ? '取消完成' : '标记完成'}</button>
-                        <button class="edit" onclick="editTodo(${index})">编辑</button>
-                        <button class="delete" onclick="deleteTodo(${index})">删除</button>
-                    </div>
-                `;
-                todoList.appendChild(li);
+                if (!todo.completed) {
+                    const li = document.createElement('li');
+                    li.className = 'todo-item';
+                    li.innerHTML = `
+                        <div class="todo-content">${todo.text}</div>
+                        <div class="todo-actions">
+                            <button onclick="toggleTodo(${index})">完成</button>
+                            <button class="secondary" onclick="editTodo(${index})">编辑</button>
+                            <button class="danger" onclick="deleteTodo(${index})">删除</button>
+                        </div>
+                    `;
+                    todoList.appendChild(li);
+                }
             });
         }
 
@@ -363,29 +849,30 @@
             const text = input.value.trim();
             
             if (text) {
-                const todos = JSON.parse(localStorage.getItem('todos')) || [];
-                todos.push({ text, completed: false });
-                localStorage.setItem('todos', JSON.stringify(todos));
+                const todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
+                todos.push({ text, completed: false, created: new Date().toISOString() });
+                localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(todos));
                 input.value = '';
                 loadTodos();
+                showNotification('任务添加成功', 'success');
             }
         }
 
         function toggleTodo(index) {
-            const todos = JSON.parse(localStorage.getItem('todos')) || [];
-            todos[index].completed = !todos[index].completed;
-                localStorage.setItem('todos', JSON.stringify(todos));
-                loadTodos();
-                showNotification(todos[index].completed ? '任务已标记为完成' : '任务已标记为未完成', 'success');
+            const todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
+            todos[index].completed = true;
+            localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(todos));
+            loadTodos();
+            showNotification('任务已标记为完成', 'success');
         }
 
         function editTodo(index) {
-            const todos = JSON.parse(localStorage.getItem('todos')) || [];
+            const todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
             const newText = prompt('编辑任务:', todos[index].text);
             
             if (newText !== null && newText.trim()) {
                 todos[index].text = newText.trim();
-                localStorage.setItem('todos', JSON.stringify(todos));
+                localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(todos));
                 loadTodos();
                 showNotification('任务更新成功', 'success');
             }
@@ -393,194 +880,63 @@
 
         function deleteTodo(index) {
             if (confirm('确定要删除这个任务吗？')) {
-                const todos = JSON.parse(localStorage.getItem('todos')) || [];
+                const todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
                 todos.splice(index, 1);
-                localStorage.setItem('todos', JSON.stringify(todos));
+                localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(todos));
                 loadTodos();
                 showNotification('任务删除成功', 'success');
             }
         }
 
-        // 学习资源功能
-        function loadResources() {
-            const resources = JSON.parse(localStorage.getItem('resources')) || [];
-            const resourceList = document.getElementById('resource-list');
-            resourceList.innerHTML = '';
+        // 长期待办事项功能
+        function loadLongTodos() {
+            const longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
+            const longTodoList = document.getElementById('long-todo-list');
+            longTodoList.innerHTML = '';
             
-            resources.forEach((resource, index) => {
-                const li = document.createElement('li');
-                li.className = 'resource-item';
-                li.innerHTML = `
-                    <div class="resource-info">
-                        <div class="resource-title"><a href="${resource.url}" target="_blank">${resource.name}</a></div>
-                        <div class="resource-url">${resource.url}</div>
-                        <div class="resource-category">${resource.category}</div>
-                    </div>
-                    <div class="resource-actions">
-                        <button class="delete" onclick="deleteResource(${index})">删除</button>
-                    </div>
-                `;
-                resourceList.appendChild(li);
+            longTodos.forEach((todo, index) => {
+                if (!todo.completed) {
+                    const li = document.createElement('li');
+                    li.className = 'todo-item';
+                    li.innerHTML = `
+                        <div class="todo-content">${todo.text}</div>
+                        <div class="todo-actions">
+                            <button onclick="toggleLongTodo(${index})">完成</button>
+                            <button class="secondary" onclick="editLongTodo(${index})">编辑</button>
+                            <button class="danger" onclick="deleteLongTodo(${index})">删除</button>
+                        </div>
+                    `;
+                    longTodoList.appendChild(li);
+                }
             });
         }
 
-        function addResource() {
-            const name = document.getElementById('resource-name').value.trim();
-            const url = document.getElementById('resource-url').value.trim();
-            const category = document.getElementById('resource-category').value;
-            
-            if (name && url) {
-                const resources = JSON.parse(localStorage.getItem('resources')) || [];
-                resources.push({ name, url, category });
-                localStorage.setItem('resources', JSON.stringify(resources));
-                document.getElementById('resource-name').value = '';
-                document.getElementById('resource-url').value = '';
-                loadResources();
-            }
-        }
-
-        function deleteResource(index) {
-            if (confirm('确定要删除这个资源吗？')) {
-                const resources = JSON.parse(localStorage.getItem('resources')) || [];
-                resources.splice(index, 1);
-                localStorage.setItem('resources', JSON.stringify(resources));
-                loadResources();
-                showNotification('资源删除成功', 'success');
-            }
-        }
-
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            loadTodos();
-            loadResources();
-            // 检查是否支持IndexedDB，优先使用
-            if ('indexedDB' in window) {
-                initIndexedDB();
-            }
-        });
-
-        // IndexedDB 初始化
-        function initIndexedDB() {
-            const request = indexedDB.open('LearningAssistant', 1);
-            
-            request.onupgradeneeded = function(event) {
-                const db = event.target.result;
-                if (!db.objectStoreNames.contains('todos')) {
-                    db.createObjectStore('todos', { keyPath: 'id', autoIncrement: true });
-                }
-                if (!db.objectStoreNames.contains('resources')) {
-                    db.createObjectStore('resources', { keyPath: 'id', autoIncrement: true });
-                }
-            };
-        }
-
-        // 数据导出功能
-        function exportData() {
-            const todos = JSON.parse(localStorage.getItem('todos')) || [];
-            const resources = JSON.parse(localStorage.getItem('resources')) || [];
-            const data = {
-                todos: todos,
-                resources: resources,
-                exportDate: new Date().toISOString()
-            };
-            const dataStr = JSON.stringify(data, null, 2);
-            document.getElementById('data-export').value = dataStr;
-            showNotification('数据导出成功', 'success');
-        }
-
-        // 数据导入功能
-        function importData() {
-            const dataStr = document.getElementById('data-export').value;
-            if (!dataStr) {
-                showNotification('请先粘贴要导入的数据', 'error');
-                return;
-            }
-            
-            try {
-                const data = JSON.parse(dataStr);
-                if (data.todos) {
-                    localStorage.setItem('todos', JSON.stringify(data.todos));
-                }
-                if (data.resources) {
-                    localStorage.setItem('resources', JSON.stringify(data.resources));
-                }
-                loadTodos();
-                loadResources();
-                showNotification('数据导入成功', 'success');
-            } catch (error) {
-                showNotification('数据格式错误，请检查输入', 'error');
-            }
-        }
-
-        // 复制数据到剪贴板
-        function copyData() {
-            const dataStr = document.getElementById('data-export').value;
-            if (!dataStr) {
-                showNotification('没有可复制的数据', 'error');
-                return;
-            }
-            
-            navigator.clipboard.writeText(dataStr).then(function() {
-                showNotification('数据已复制到剪贴板', 'success');
-            }).catch(function() {
-                showNotification('复制失败，请手动复制', 'error');
-            });
-        }
-
-        // 清空所有数据
-        function clearData() {
-            if (confirm('确定要清空所有数据吗？此操作不可恢复！')) {
-                localStorage.removeItem('todos');
-                localStorage.removeItem('resources');
-                loadTodos();
-                loadResources();
-                document.getElementById('data-export').value = '';
-                showNotification('所有数据已清空', 'success');
-            }
-        }
-
-        // 显示通知
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(function() {
-                notification.remove();
-            }, 3000);
-        }
-
-        // 优化移动端输入体验
-        function addTodo() {
-            const input = document.getElementById('todo-input');
+        function addLongTodo() {
+            const input = document.getElementById('long-todo-input');
             const text = input.value.trim();
             
             if (text) {
-                const todos = JSON.parse(localStorage.getItem('todos')) || [];
-                todos.push({ text, completed: false });
-                localStorage.setItem('todos', JSON.stringify(todos));
+                const longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
+                longTodos.push({ text, completed: false, created: new Date().toISOString() });
+                localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(longTodos));
                 input.value = '';
-                loadTodos();
-                showNotification('任务添加成功', 'success');
+                loadLongTodos();
+                showNotification('长期任务添加成功', 'success');
             }
         }
 
-        function addResource() {
-            const name = document.getElementById('resource-name').value.trim();
-            const url = document.getElementById('resource-url').value.trim();
-            const category = document.getElementById('resource-category').value;
-            
-            if (name && url) {
-                const resources = JSON.parse(localStorage.getItem('resources')) || [];
-                resources.push({ name, url, category });
-                localStorage.setItem('resources', JSON.stringify(resources));
-                document.getElementById('resource-name').value = '';
-                document.getElementById('resource-url').value = '';
-                loadResources();
-                showNotification('资源添加成功', 'success');
-            }
+        function toggleLongTodo(index) {
+            const longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
+            longTodos[index].completed = true;
+            localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(longTodos));
+            loadLongTodos();
+            showNotification('长期任务已标记为完成', 'success');
         }
-    </script>
-</body>
-</html>
+
+        function editLongTodo(index) {
+            const longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
+            const newText = prompt('编辑长期任务:', longTodos[index].text);
+            
+            if (newText !== null && newText.trim()) {
+                longTodos[index].text = newText.trim();
+     
