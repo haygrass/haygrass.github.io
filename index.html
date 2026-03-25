@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌿干草成长日志🌿</title>
+    <title>干草成长日志</title>
     <style>
         /* 全局样式 */
         * {
@@ -46,7 +46,7 @@
         }
 
         h1 {
-            font-family: 'KaiTi', '楷体', serif;
+            font-family: 'SimHei', '黑体', sans-serif;
             color: #3498db;
             font-size: 32px;
             margin-bottom: 10px;
@@ -409,11 +409,6 @@
         }
 
         /* 学习资源样式 */
-       
-        .resource-section {
-            text-align: center;
-        }
-       
         .resource-list {
             list-style: none;
             max-height: 300px;
@@ -637,7 +632,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>干草成长日志</h1>
+            <h1>个人学习助手</h1>
         </header>
 
         <!-- 待办事项功能 -->
@@ -715,7 +710,7 @@
 
             <!-- 鸡汤模块 -->
             <div class="card motivation-section">
-                <h2>浇灌干草</h2>
+                <h2>灌溉干草</h2>
                 <div class="motivation-content" id="motivation-content">
                     <!-- 鸡汤内容将通过JavaScript动态生成 -->
                 </div>
@@ -763,7 +758,7 @@
 
     <script>
         // 数据存储键名
-        const STORAGE_KEYS = {
+        var STORAGE_KEYS = {
             todos: 'learning_assistant_todos',
             longTodos: 'learning_assistant_long_todos',
             ddls: 'learning_assistant_ddls',
@@ -810,7 +805,7 @@
             
             // 初始化鸡汤
             if (!localStorage.getItem(STORAGE_KEYS.motivations)) {
-                const defaultMotivations = [
+                var defaultMotivations = [
                     "学而时习之，不亦说乎？",
                     "温故而知新，可以为师矣。",
                     "学而不思则罔，思而不学则殆。",
@@ -823,34 +818,34 @@
 
         // 待办事项功能
         function loadTodos() {
-            const todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
-            const todoList = document.getElementById('todo-list');
+            var todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
+            var todoList = document.getElementById('todo-list');
             todoList.innerHTML = '';
             
-            todos.forEach((todo, index) => {
+            todos.forEach(function(todo, index) {
                 if (!todo.completed) {
-                    const li = document.createElement('li');
+                    var li = document.createElement('li');
                     li.className = 'todo-item';
-                    li.innerHTML = `
-                        <div class="todo-content">${todo.text}</div>
-                        <div class="todo-actions">
-                            <button onclick="toggleTodo(${index})">完成</button>
-                            <button class="secondary" onclick="editTodo(${index})">编辑</button>
-                            <button class="danger" onclick="deleteTodo(${index})">删除</button>
-                        </div>
-                    `;
+                    li.innerHTML = [
+                        '<div class="todo-content">' + todo.text + '</div>',
+                        '<div class="todo-actions">',
+                            '<button onclick="toggleTodo(' + index + ')">完成</button>',
+                            '<button class="secondary" onclick="editTodo(' + index + ')">编辑</button>',
+                            '<button class="danger" onclick="deleteTodo(' + index + ')">删除</button>',
+                        '</div>'
+                    ].join('');
                     todoList.appendChild(li);
                 }
             });
         }
 
         function addTodo() {
-            const input = document.getElementById('todo-input');
-            const text = input.value.trim();
+            var input = document.getElementById('todo-input');
+            var text = input.value.trim();
             
             if (text) {
-                const todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
-                todos.push({ text, completed: false, created: new Date().toISOString() });
+                var todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
+                todos.push({ text: text, completed: false, created: new Date().toISOString() });
                 localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(todos));
                 input.value = '';
                 loadTodos();
@@ -859,7 +854,7 @@
         }
 
         function toggleTodo(index) {
-            const todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
+            var todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
             todos[index].completed = true;
             localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(todos));
             loadTodos();
@@ -867,8 +862,8 @@
         }
 
         function editTodo(index) {
-            const todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
-            const newText = prompt('编辑任务:', todos[index].text);
+            var todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
+            var newText = prompt('编辑任务:', todos[index].text);
             
             if (newText !== null && newText.trim()) {
                 todos[index].text = newText.trim();
@@ -880,7 +875,7 @@
 
         function deleteTodo(index) {
             if (confirm('确定要删除这个任务吗？')) {
-                const todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
+                var todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
                 todos.splice(index, 1);
                 localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(todos));
                 loadTodos();
@@ -890,34 +885,34 @@
 
         // 长期待办事项功能
         function loadLongTodos() {
-            const longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
-            const longTodoList = document.getElementById('long-todo-list');
+            var longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
+            var longTodoList = document.getElementById('long-todo-list');
             longTodoList.innerHTML = '';
             
-            longTodos.forEach((todo, index) => {
+            longTodos.forEach(function(todo, index) {
                 if (!todo.completed) {
-                    const li = document.createElement('li');
+                    var li = document.createElement('li');
                     li.className = 'todo-item';
-                    li.innerHTML = `
-                        <div class="todo-content">${todo.text}</div>
-                        <div class="todo-actions">
-                            <button onclick="toggleLongTodo(${index})">完成</button>
-                            <button class="secondary" onclick="editLongTodo(${index})">编辑</button>
-                            <button class="danger" onclick="deleteLongTodo(${index})">删除</button>
-                        </div>
-                    `;
+                    li.innerHTML = [
+                        '<div class="todo-content">' + todo.text + '</div>',
+                        '<div class="todo-actions">',
+                            '<button onclick="toggleLongTodo(' + index + ')">完成</button>',
+                            '<button class="secondary" onclick="editLongTodo(' + index + ')">编辑</button>',
+                            '<button class="danger" onclick="deleteLongTodo(' + index + ')">删除</button>',
+                        '</div>'
+                    ].join('');
                     longTodoList.appendChild(li);
                 }
             });
         }
 
         function addLongTodo() {
-            const input = document.getElementById('long-todo-input');
-            const text = input.value.trim();
+            var input = document.getElementById('long-todo-input');
+            var text = input.value.trim();
             
             if (text) {
-                const longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
-                longTodos.push({ text, completed: false, created: new Date().toISOString() });
+                var longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
+                longTodos.push({ text: text, completed: false, created: new Date().toISOString() });
                 localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(longTodos));
                 input.value = '';
                 loadLongTodos();
@@ -926,7 +921,7 @@
         }
 
         function toggleLongTodo(index) {
-            const longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
+            var longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
             longTodos[index].completed = true;
             localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(longTodos));
             loadLongTodos();
@@ -934,9 +929,457 @@
         }
 
         function editLongTodo(index) {
-            const longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
-            const newText = prompt('编辑长期任务:', longTodos[index].text);
+            var longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
+            var newText = prompt('编辑长期任务:', longTodos[index].text);
             
             if (newText !== null && newText.trim()) {
                 longTodos[index].text = newText.trim();
-     
+                localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(longTodos));
+                loadLongTodos();
+                showNotification('长期任务更新成功', 'success');
+            }
+        }
+
+        function deleteLongTodo(index) {
+            if (confirm('确定要删除这个长期任务吗？')) {
+                var longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
+                longTodos.splice(index, 1);
+                localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(longTodos));
+                loadLongTodos();
+                showNotification('长期任务删除成功', 'success');
+            }
+        }
+
+        // DDL日历功能
+        var currentDDLMonth = new Date();
+
+        function changeMonth(direction) {
+            currentDDLMonth.setMonth(currentDDLMonth.getMonth() + direction);
+            renderDDLCalendar();
+        }
+
+        function renderDDLCalendar() {
+            var calendar = document.getElementById('ddl-calendar');
+            var monthElement = document.getElementById('current-month');
+            
+            var year = currentDDLMonth.getFullYear();
+            var month = currentDDLMonth.getMonth();
+            monthElement.textContent = year + '年' + (month + 1) + '月';
+            
+            var firstDay = new Date(year, month, 1);
+            var lastDay = new Date(year, month + 1, 0);
+            var daysInMonth = lastDay.getDate();
+            var startDay = firstDay.getDay();
+            
+            var calendarHTML = '<div class="calendar-header"></div>';
+            
+            // 星期标题
+            var weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+            weekdays.forEach(function(day) {
+                calendarHTML += '<div class="calendar-weekday">' + day + '</div>';
+            });
+            
+            // 空白天数
+            for (var i = 0; i < startDay; i++) {
+                calendarHTML += '<div class="calendar-day-small" style="background: #f0f0f0;"></div>';
+            }
+            
+            // 日期
+            var ddls = JSON.parse(localStorage.getItem(STORAGE_KEYS.ddls)) || [];
+            for (var day = 1; day <= daysInMonth; day++) {
+                var currentDate = new Date(year, month, day);
+                var isToday = currentDate.toDateString() === new Date().toDateString();
+                var dayDDLs = ddls.filter(function(ddl) {
+                    var ddlDate = new Date(ddl.time);
+                    return ddlDate.getFullYear() === year && 
+                           ddlDate.getMonth() === month && 
+                           ddlDate.getDate() === day;
+                });
+                var hasDDL = dayDDLs.length > 0;
+                
+                var ddlInfo = '';
+                if (hasDDL) {
+                    dayDDLs.forEach(function(ddl) {
+                        var ddlTime = new Date(ddl.time);
+                        var timeStr = ddlTime.getHours().toString().padStart(2, '0') + ':' + ddlTime.getMinutes().toString().padStart(2, '0');
+                        ddlInfo += '<div class="ddl-info">' + timeStr + ' ' + ddl.title + '</div>';
+                    });
+                }
+                
+                calendarHTML += '<div class="calendar-day-small ' + (isToday ? 'today' : '') + ' ' + (hasDDL ? 'has-ddl' : '') + '" onclick="showDayDDLs(' + year + ', ' + month + ', ' + day + ')"><div class="date-number">' + day + '</div>' + ddlInfo + '</div>';
+            }
+            
+            calendar.innerHTML = calendarHTML;
+        }
+
+        function showDayDDLs(year, month, day) {
+            var ddls = JSON.parse(localStorage.getItem(STORAGE_KEYS.ddls)) || [];
+            var dayDDLs = ddls.filter(function(ddl) {
+                var ddlDate = new Date(ddl.time);
+                return ddlDate.getFullYear() === year && 
+                       ddlDate.getMonth() === month && 
+                       ddlDate.getDate() === day;
+            });
+            
+            var ddlList = '<h4>' + year + '年' + (month + 1) + '月' + day + '日</h4>';
+            if (dayDDLs.length === 0) {
+                ddlList += '<p>无DDL</p>';
+            } else {
+                ddlList += '<ul>';
+                dayDDLs.forEach(function(ddl, index) {
+                    var ddlTime = new Date(ddl.time);
+                    ddlList += '<li style="padding: 10px; margin: 5px 0; background: #ffebee; border-radius: 4px;">' +
+                        '<strong>' + ddl.title + '</strong><br>' +
+                        ddlTime.getHours().toString().padStart(2, '0') + ':' + ddlTime.getMinutes().toString().padStart(2, '0') +
+                        '<button class="danger" style="margin-top: 5px; padding: 4px 8px; font-size: 12px;" onclick="deleteDDL(' + ddls.indexOf(ddl) + ')">删除</button>' +
+                    '</li>';
+                });
+                ddlList += '</ul>';
+            }
+            
+            document.getElementById('ddl-calendar').innerHTML = ddlList;
+        }
+
+        function addDDL() {
+            var title = document.getElementById('ddl-title').value.trim();
+            var time = document.getElementById('ddl-time').value;
+            
+            if (title && time) {
+                var ddls = JSON.parse(localStorage.getItem(STORAGE_KEYS.ddls)) || [];
+                ddls.push({ title: title, time: time });
+                localStorage.setItem(STORAGE_KEYS.ddls, JSON.stringify(ddls));
+                
+                // 清空输入
+                document.getElementById('ddl-title').value = '';
+                document.getElementById('ddl-time').value = '';
+                
+                renderDDLCalendar();
+                showNotification('DDL添加成功', 'success');
+            } else {
+                showNotification('请填写完整DDL信息', 'error');
+            }
+        }
+
+        function deleteDDL(index) {
+            if (confirm('确定要删除这个DDL吗？')) {
+                var ddls = JSON.parse(localStorage.getItem(STORAGE_KEYS.ddls)) || [];
+                ddls.splice(index, 1);
+                localStorage.setItem(STORAGE_KEYS.ddls, JSON.stringify(ddls));
+                renderDDLCalendar();
+                showNotification('DDL删除成功', 'success');
+            }
+        }
+
+        // 专注功能
+        var focusTimer = null;
+        var focusSeconds = 0;
+        var focusMode = 'stopwatch'; // stopwatch 或 countdown
+        var focusDuration = 25 * 60; // 默认25分钟
+
+        function startFocus() {
+            if (!focusTimer) {
+                focusTimer = setInterval(function() {
+                    if (focusMode === 'stopwatch') {
+                        focusSeconds++;
+                    } else {
+                        focusSeconds--;
+                        if (focusSeconds <= 0) {
+                            clearInterval(focusTimer);
+                            focusTimer = null;
+                            showNotification('专注时间结束！', 'info');
+                            updateFocusStats(focusDuration);
+                        }
+                    }
+                    updateFocusTimerDisplay();
+                }, 1000);
+                showNotification('专注开始', 'success');
+            }
+        }
+
+        function pauseFocus() {
+            if (focusTimer) {
+                clearInterval(focusTimer);
+                focusTimer = null;
+                showNotification('专注暂停', 'info');
+            }
+        }
+
+        function resetFocus() {
+            if (focusTimer) {
+                clearInterval(focusTimer);
+                focusTimer = null;
+            }
+            focusSeconds = 0;
+            updateFocusTimerDisplay();
+            showNotification('专注重置', 'info');
+        }
+
+        function setFocusDuration() {
+            var duration = parseInt(document.getElementById('focus-duration').value);
+            if (duration && duration > 0) {
+                focusMode = 'countdown';
+                focusDuration = duration * 60;
+                focusSeconds = focusDuration;
+                updateFocusTimerDisplay();
+                showNotification('已设置' + duration + '分钟倒计时', 'success');
+            }
+        }
+
+        function updateFocusTimerDisplay() {
+            var hours = Math.floor(focusSeconds / 3600);
+            var minutes = Math.floor((focusSeconds % 3600) / 60);
+            var seconds = focusSeconds % 60;
+            document.getElementById('focus-timer').textContent = 
+                hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+        }
+
+        function updateFocusStats(seconds) {
+            var stats = JSON.parse(localStorage.getItem(STORAGE_KEYS.focusStats)) || {
+                today: 0,
+                average30Days: 0
+            };
+            
+            // 更新今日专注时长
+            stats.today += seconds;
+            
+            // 更新专注历史
+            var history = JSON.parse(localStorage.getItem(STORAGE_KEYS.focusHistory)) || [];
+            var today = new Date().toDateString();
+            var todayRecord = history.find(function(item) { return item.date === today; });
+            
+            if (todayRecord) {
+                todayRecord.duration += seconds;
+            } else {
+                history.push({ date: today, duration: seconds });
+            }
+            
+            // 只保留近30天的记录
+            var thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            var recentHistory = history.filter(function(item) { return new Date(item.date) >= thirtyDaysAgo; });
+            
+            // 计算近30天平均时长
+            var total30Days = recentHistory.reduce(function(sum, item) { return sum + item.duration; }, 0);
+            stats.average30Days = recentHistory.length > 0 ? Math.round(total30Days / recentHistory.length / 60) : 0;
+            
+            localStorage.setItem(STORAGE_KEYS.focusStats, JSON.stringify(stats));
+            localStorage.setItem(STORAGE_KEYS.focusHistory, JSON.stringify(recentHistory));
+            
+            loadFocusStats();
+            renderFocusChart(recentHistory);
+        }
+
+        function loadFocusStats() {
+            var stats = JSON.parse(localStorage.getItem(STORAGE_KEYS.focusStats)) || {
+                today: 0,
+                average30Days: 0
+            };
+            
+            var statsElement = document.getElementById('focus-stats');
+            statsElement.innerHTML = [
+                '<div>今日专注: ' + Math.round(stats.today / 60) + ' 分钟</div>',
+                '<div>近30天平均: ' + stats.average30Days + ' 分钟</div>'
+            ].join('');
+        }
+
+        function renderFocusChart(history) {
+            var chartContainer = document.getElementById('focus-chart');
+            chartContainer.innerHTML = '';
+            
+            // 生成近30天的日期数组
+            var dates = [];
+            for (var i = 29; i >= 0; i--) {
+                var date = new Date();
+                date.setDate(date.getDate() - i);
+                dates.push(date.toDateString());
+            }
+            
+            // 填充数据
+            var data = dates.map(function(date) {
+                var record = history.find(function(item) { return item.date === date; });
+                return record ? record.duration / 60 : 0; // 转换为分钟
+            });
+            
+            // 计算最大值
+            var maxValue = Math.max.apply(null, data.concat([1]));
+            
+            // 生成柱状图
+            dates.forEach(function(date, index) {
+                var bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                var height = (data[index] / maxValue) * 100;
+                bar.style.height = height + '%';
+                
+                var label = document.createElement('div');
+                label.className = 'chart-bar-label';
+                label.textContent = new Date(date).getDate();
+                
+                bar.appendChild(label);
+                chartContainer.appendChild(bar);
+            });
+        }
+
+        // 学习资源功能
+        function loadResources() {
+            var resources = JSON.parse(localStorage.getItem(STORAGE_KEYS.resources)) || [];
+            var resourceList = document.getElementById('resource-list');
+            resourceList.innerHTML = '';
+            
+            resources.forEach(function(resource, index) {
+                var li = document.createElement('li');
+                li.className = 'resource-item';
+                li.innerHTML = [
+                    '<div class="resource-info">',
+                        '<div class="resource-title"><a href="' + resource.url + '" target="_blank">' + resource.name + '</a></div>',
+                        '<div class="resource-url">' + resource.url + '</div>',
+                        '<div class="resource-platform">' + resource.platform + '</div>',
+                    '</div>',
+                    '<div class="todo-actions">',
+                        '<button class="danger" onclick="deleteResource(' + index + ')">删除</button>',
+                    '</div>'
+                ].join('');
+                resourceList.appendChild(li);
+            });
+        }
+
+        function addResource() {
+            var name = document.getElementById('resource-name').value.trim();
+            var url = document.getElementById('resource-url').value.trim();
+            var platform = document.getElementById('resource-platform').value;
+            
+            if (name && url) {
+                var resources = JSON.parse(localStorage.getItem(STORAGE_KEYS.resources)) || [];
+                resources.push({ name: name, url: url, platform: platform, added: new Date().toISOString() });
+                localStorage.setItem(STORAGE_KEYS.resources, JSON.stringify(resources));
+                
+                // 清空输入
+                document.getElementById('resource-name').value = '';
+                document.getElementById('resource-url').value = '';
+                
+                loadResources();
+                showNotification('资源添加成功', 'success');
+            } else {
+                showNotification('请填写完整资源信息', 'error');
+            }
+        }
+
+        function deleteResource(index) {
+            if (confirm('确定要删除这个资源吗？')) {
+                var resources = JSON.parse(localStorage.getItem(STORAGE_KEYS.resources)) || [];
+                resources.splice(index, 1);
+                localStorage.setItem(STORAGE_KEYS.resources, JSON.stringify(resources));
+                loadResources();
+                showNotification('资源删除成功', 'success');
+            }
+        }
+
+        // 鸡汤模块功能
+        function loadMotivation() {
+            var motivations = JSON.parse(localStorage.getItem(STORAGE_KEYS.motivations)) || [];
+            if (motivations.length > 0) {
+                var randomIndex = Math.floor(Math.random() * motivations.length);
+                document.getElementById('motivation-content').textContent = motivations[randomIndex];
+            }
+        }
+
+        function refreshMotivation() {
+            loadMotivation();
+            showNotification('鸡汤已刷新', 'success');
+        }
+
+        function addMotivation() {
+            var input = document.getElementById('motivation-input');
+            var text = input.value.trim();
+            
+            if (text) {
+                var motivations = JSON.parse(localStorage.getItem(STORAGE_KEYS.motivations)) || [];
+                motivations.push(text);
+                localStorage.setItem(STORAGE_KEYS.motivations, JSON.stringify(motivations));
+                input.value = '';
+                showNotification('鸡汤添加成功', 'success');
+                loadMotivation();
+            }
+        }
+
+        // 数据同步功能
+        function exportData() {
+            var data = {
+                todos: JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [],
+                longTodos: JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [],
+                ddls: JSON.parse(localStorage.getItem(STORAGE_KEYS.ddls)) || [],
+                resources: JSON.parse(localStorage.getItem(STORAGE_KEYS.resources)) || [],
+                focusStats: JSON.parse(localStorage.getItem(STORAGE_KEYS.focusStats)) || {},
+                focusHistory: JSON.parse(localStorage.getItem(STORAGE_KEYS.focusHistory)) || [],
+                motivations: JSON.parse(localStorage.getItem(STORAGE_KEYS.motivations)) || [],
+                exportDate: new Date().toISOString()
+            };
+            var dataStr = JSON.stringify(data, null, 2);
+            document.getElementById('data-export').value = dataStr;
+            showNotification('数据导出成功', 'success');
+        }
+
+        function copyData() {
+            var dataStr = document.getElementById('data-export').value;
+            if (!dataStr) {
+                showNotification('没有可复制的数据', 'error');
+                return;
+            }
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(dataStr).then(function() {
+                    showNotification('数据已复制到剪贴板', 'success');
+                }).catch(function() {
+                    showNotification('复制失败，请手动复制', 'error');
+                });
+            } else {
+                showNotification('浏览器不支持复制功能，请手动复制', 'error');
+            }
+        }
+
+        function clearData() {
+            if (confirm('确定要清空所有数据吗？此操作不可恢复！')) {
+                Object.values(STORAGE_KEYS).forEach(function(key) {
+                    localStorage.removeItem(key);
+                });
+                initData();
+                
+                // 重新加载所有数据
+                loadTodos();
+                loadLongTodos();
+                renderDDLCalendar();
+                loadResources();
+                loadFocusStats();
+                renderFocusChart([]);
+                loadMotivation();
+                
+                document.getElementById('data-export').value = '';
+                showNotification('所有数据已清空', 'success');
+            }
+        }
+
+        // 显示通知
+        function showNotification(message, type) {
+            var notification = document.createElement('div');
+            notification.className = 'notification ' + type;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(function() {
+                notification.remove();
+            }, 3000);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initData();
+            loadTodos();
+            loadLongTodos();
+            renderDDLCalendar();
+            loadResources();
+            loadFocusStats();
+            renderFocusChart(JSON.parse(localStorage.getItem(STORAGE_KEYS.focusHistory)) || []);
+            loadMotivation();
+        });
+    </script>
+</body>
+</html>
