@@ -746,10 +746,12 @@
             <div class="sync-section">
                 <div class="sync-buttons">
                     <button onclick="exportData()">导出数据</button>
+                    <button onclick="syncData()">同步数据</button>
                 </div>
                 <textarea id="data-export" placeholder="导出的数据将显示在这里..."></textarea>
                 <div class="sync-buttons">
                     <button onclick="copyData()">复制数据</button>
+                    <button onclick="pasteData()">粘贴数据</button>
                     <button class="danger" onclick="clearData()">清空所有数据</button>
                 </div>
             </div>
@@ -1318,6 +1320,152 @@
             showNotification('数据导出成功', 'success');
         }
 
+        function syncData() {
+            var dataStr = document.getElementById('data-export').value;
+            if (!dataStr) {
+                showNotification('请先粘贴数据到文本框', 'error');
+                return;
+            }
+            
+            try {
+                var importedData = JSON.parse(dataStr);
+                
+                // 同步待办事项
+                var currentTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
+                var newTodos = importedData.todos || [];
+                var mergedTodos = mergeTodos(currentTodos, newTodos);
+                localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(mergedTodos));
+                
+                // 同步长期待办事项
+                var currentLongTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
+                var newLongTodos = importedData.longTodos || [];
+                var mergedLongTodos = mergeTodos(currentLongTodos, newLongTodos);
+                localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(mergedLongTodos));
+                
+                // 同步DDL
+                var currentDDLs = JSON.parse(localStorage.getItem(STORAGE_KEYS.ddls)) || [];
+                var newDDLs = importedData.ddls || [];
+                var mergedDDLs = mergeDDLs(currentDDLs, newDDLs);
+                localStorage.setItem(STORAGE_KEYS.ddls, JSON.stringify(mergedDDLs));
+                
+                // 同步学习资源
+                var currentResources = JSON.parse(localStorage.getItem(STORAGE_KEYS.resources)) || [];
+                var newResources = importedData.resources || [];
+                var mergedResources = mergeResources(currentResources, newResources);
+                localStorage.setItem(STORAGE_KEYS.resources, JSON.stringify(mergedResources));
+                
+                // 同步专注历史
+                var currentFocusHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.focusHistory)) || [];
+                var newFocusHistory = importedData.focusHistory || [];
+                var mergedFocusHistory = mergeFocusHistory(currentFocusHistory, newFocusHistory);
+                localStorage.setItem(STORAGE_KEYS.focusHistory, JSON.stringify(mergedFocusHistory));
+                
+                // 同步鸡汤
+                var currentMotivations = JSON.parse(localStorage.getItem(STORAGE_KEYS.motivations)) || [];
+                var newMotivations = importedData.motivations || [];
+                var mergedMotivations = mergeMotivations(currentMotivations, newMotivations);
+                localStorage.setItem(STORAGE_KEYS.motivations, JSON.stringify(mergedMotivations));
+                
+                // 重新计算专注统计
+                updateFocusStats(0);
+                
+                // 重新加载所有数据
+                loadTodos();
+                loadLongTodos();
+                renderDDLCalendar();
+                loadResources();
+                loadFocusStats();
+                renderFocusChart(mergedFocusHistory);
+                loadMotivation();
+                
+                showNotification('数据同步成功', 'success');
+            } catch (e) {
+                showNotification('数据格式错误，同步失败', 'error');
+            }
+        }
+
+        // 合并待办事项
+        function mergeTodos(current, imported) {
+            var merged = [...current];
+            imported.forEach(function(item) {
+                // 检查是否已存在相同的任务
+                var exists = merged.some(function(existing) {
+                    return existing.text === item.text && existing.completed === item.completed;
+                });
+                if (!exists) {
+                    merged.push(item);
+                }
+            });
+            return merged;
+        }
+
+        // 合并DDL
+        function mergeDDLs(current, imported) {
+            var merged = [...current];
+            imported.forEach(function(item) {
+                // 检查是否已存在相同的DDL
+                var exists = merged.some(function(existing) {
+                    return existing.title === item.title && existing.time === item.time;
+                });
+                if (!exists) {
+                    merged.push(item);
+                }
+            });
+            return merged;
+        }
+
+        // 合并学习资源
+        function mergeResources(current, imported) {
+            var merged = [...current];
+            imported.forEach(function(item) {
+                // 检查是否已存在相同的资源
+                var exists = merged.some(function(existing) {
+                    return existing.url === item.url;
+                });
+                if (!exists) {
+                    merged.push(item);
+                }
+            });
+            return merged;
+        }
+
+        // 合并专注历史
+        function mergeFocusHistory(current, imported) {
+            var merged = [...current];
+            imported.forEach(function(item) {
+                // 检查是否已存在相同日期的记录
+                var existingIndex = merged.findIndex(function(existing) {
+                    return existing.date === item.date;
+                });
+                if (existingIndex === -1) {
+                    merged.push(item);
+                } else {
+                    // 如果存在，取较大的值
+                    if (item.duration > merged[existingIndex].duration) {
+                        merged[existingIndex].duration = item.duration;
+                    }
+                }
+            });
+            // 只保留近30天的记录
+            var thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            return merged.filter(function(item) {
+                return new Date(item.date) >= thirtyDaysAgo;
+            });
+        }
+
+        // 合并鸡汤
+        function mergeMotivations(current, imported) {
+            var merged = [...current];
+            imported.forEach(function(item) {
+                // 检查是否已存在相同的鸡汤
+                if (!merged.includes(item)) {
+                    merged.push(item);
+                }
+            });
+            return merged;
+        }
+
         function copyData() {
             var dataStr = document.getElementById('data-export').value;
             if (!dataStr) {
@@ -1333,6 +1481,19 @@
                 });
             } else {
                 showNotification('浏览器不支持复制功能，请手动复制', 'error');
+            }
+        }
+
+        function pasteData() {
+            if (navigator.clipboard) {
+                navigator.clipboard.readText().then(function(text) {
+                    document.getElementById('data-export').value = text;
+                    showNotification('数据已粘贴到文本框', 'success');
+                }).catch(function() {
+                    showNotification('粘贴失败，请手动粘贴', 'error');
+                });
+            } else {
+                showNotification('浏览器不支持粘贴功能，请手动粘贴', 'error');
             }
         }
 
