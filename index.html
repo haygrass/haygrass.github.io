@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人学习助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: grid;
+            grid-template-areas:
+                "header header"
+                "todo resources";
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+            padding: 20px;
+            height: 100vh;
+        }
+
+        header {
+            grid-area: header;
+            text-align: center;
+            padding: 20px;
+            background-color: #252525;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #4CAF50;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .todo-section {
+            grid-area: todo;
+            background-color: #252525;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+        }
+
+        .resources-section {
+            grid-area: resources;
+            background-color: #252525;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+        }
+
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], input[type="url"], select {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background-color: #333;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+
+        input[type="text"]:focus, input[type="url"]:focus, select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button.delete {
+            background-color: #f44336;
+        }
+
+        button.delete:hover {
+            background-color: #da190b;
+        }
+
+        button.edit {
+            background-color: #ff9800;
+        }
+
+        button.edit:hover {
+            background-color: #e68a00;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #333;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        li:hover {
+            background-color: #3a3a3a;
+        }
+
+        li.completed {
+            background-color: #2a2a2a;
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .todo-item {
+            flex: 1;
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #333;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .resource-item:hover {
+            background-color: #3a3a3a;
+        }
+
+        .resource-info {
+            flex: 1;
+        }
+
+        .resource-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .resource-url {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .resource-category {
+            font-size: 10px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .resource-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-areas:
+                    "header"
+                    "todo"
+                    "resources";
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto 1fr;
+                height: auto;
+                padding: 10px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            button {
+                padding: 12px;
+                font-size: 16px;
+            }
+            
+            input[type="text"], input[type="url"], select {
+                padding: 12px;
+                font-size: 16px;
+            }
+            
+            li {
+                padding: 12px;
+            }
+        }
+        
+        .sync-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+        
+        .sync-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background-color: #333;
+            color: #e0e0e0;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: monospace;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .success {
+            background-color: #4CAF50;
+        }
+        
+        .error {
+            background-color: #f44336;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>个人学习助手</h1>
+        </header>
+
+        <div class="todo-section">
+            <h2>待办事项</h2>
+            <div class="input-group">
+                <input type="text" id="todo-input" placeholder="添加新任务...">
+                <button onclick="addTodo()">添加</button>
+            </div>
+            <ul id="todo-list"></ul>
+        </div>
+
+        <div class="resources-section">
+            <h2>学习资源</h2>
+            <div class="input-group">
+                <input type="text" id="resource-name" placeholder="资源名称...">
+                <input type="url" id="resource-url" placeholder="网址...">
+                <select id="resource-category">
+                    <option value="编程">编程</option>
+                    <option value="数学">数学</option>
+                    <option value="英语">英语</option>
+                    <option value="其他">其他</option>
+                </select>
+                <button onclick="addResource()">添加</button>
+            </div>
+            <ul id="resource-list"></ul>
+            
+            <div class="sync-section">
+                <h3>数据同步</h3>
+                <div class="sync-buttons">
+                    <button onclick="exportData()">导出数据</button>
+                    <button onclick="importData()">导入数据</button>
+                </div>
+                <textarea id="data-export" placeholder="导出的数据将显示在这里..."></textarea>
+                <button onclick="copyData()">复制数据</button>
+                <button onclick="clearData()">清空所有数据</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 待办事项功能
+        function loadTodos() {
+            const todos = JSON.parse(localStorage.getItem('todos')) || [];
+            const todoList = document.getElementById('todo-list');
+            todoList.innerHTML = '';
+            
+            todos.forEach((todo, index) => {
+                const li = document.createElement('li');
+                li.className = todo.completed ? 'completed' : '';
+                li.innerHTML = `
+                    <div class="todo-item">${todo.text}</div>
+                    <div class="todo-actions">
+                        <button onclick="toggleTodo(${index})">${todo.completed ? '取消完成' : '标记完成'}</button>
+                        <button class="edit" onclick="editTodo(${index})">编辑</button>
+                        <button class="delete" onclick="deleteTodo(${index})">删除</button>
+                    </div>
+                `;
+                todoList.appendChild(li);
+            });
+        }
+
+        function addTodo() {
+            const input = document.getElementById('todo-input');
+            const text = input.value.trim();
+            
+            if (text) {
+                const todos = JSON.parse(localStorage.getItem('todos')) || [];
+                todos.push({ text, completed: false });
+                localStorage.setItem('todos', JSON.stringify(todos));
+                input.value = '';
+                loadTodos();
+            }
+        }
+
+        function toggleTodo(index) {
+            const todos = JSON.parse(localStorage.getItem('todos')) || [];
+            todos[index].completed = !todos[index].completed;
+                localStorage.setItem('todos', JSON.stringify(todos));
+                loadTodos();
+                showNotification(todos[index].completed ? '任务已标记为完成' : '任务已标记为未完成', 'success');
+        }
+
+        function editTodo(index) {
+            const todos = JSON.parse(localStorage.getItem('todos')) || [];
+            const newText = prompt('编辑任务:', todos[index].text);
+            
+            if (newText !== null && newText.trim()) {
+                todos[index].text = newText.trim();
+                localStorage.setItem('todos', JSON.stringify(todos));
+                loadTodos();
+                showNotification('任务更新成功', 'success');
+            }
+        }
+
+        function deleteTodo(index) {
+            if (confirm('确定要删除这个任务吗？')) {
+                const todos = JSON.parse(localStorage.getItem('todos')) || [];
+                todos.splice(index, 1);
+                localStorage.setItem('todos', JSON.stringify(todos));
+                loadTodos();
+                showNotification('任务删除成功', 'success');
+            }
+        }
+
+        // 学习资源功能
+        function loadResources() {
+            const resources = JSON.parse(localStorage.getItem('resources')) || [];
+            const resourceList = document.getElementById('resource-list');
+            resourceList.innerHTML = '';
+            
+            resources.forEach((resource, index) => {
+                const li = document.createElement('li');
+                li.className = 'resource-item';
+                li.innerHTML = `
+                    <div class="resource-info">
+                        <div class="resource-title"><a href="${resource.url}" target="_blank">${resource.name}</a></div>
+                        <div class="resource-url">${resource.url}</div>
+                        <div class="resource-category">${resource.category}</div>
+                    </div>
+                    <div class="resource-actions">
+                        <button class="delete" onclick="deleteResource(${index})">删除</button>
+                    </div>
+                `;
+                resourceList.appendChild(li);
+            });
+        }
+
+        function addResource() {
+            const name = document.getElementById('resource-name').value.trim();
+            const url = document.getElementById('resource-url').value.trim();
+            const category = document.getElementById('resource-category').value;
+            
+            if (name && url) {
+                const resources = JSON.parse(localStorage.getItem('resources')) || [];
+                resources.push({ name, url, category });
+                localStorage.setItem('resources', JSON.stringify(resources));
+                document.getElementById('resource-name').value = '';
+                document.getElementById('resource-url').value = '';
+                loadResources();
+            }
+        }
+
+        function deleteResource(index) {
+            if (confirm('确定要删除这个资源吗？')) {
+                const resources = JSON.parse(localStorage.getItem('resources')) || [];
+                resources.splice(index, 1);
+                localStorage.setItem('resources', JSON.stringify(resources));
+                loadResources();
+                showNotification('资源删除成功', 'success');
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTodos();
+            loadResources();
+            // 检查是否支持IndexedDB，优先使用
+            if ('indexedDB' in window) {
+                initIndexedDB();
+            }
+        });
+
+        // IndexedDB 初始化
+        function initIndexedDB() {
+            const request = indexedDB.open('LearningAssistant', 1);
+            
+            request.onupgradeneeded = function(event) {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains('todos')) {
+                    db.createObjectStore('todos', { keyPath: 'id', autoIncrement: true });
+                }
+                if (!db.objectStoreNames.contains('resources')) {
+                    db.createObjectStore('resources', { keyPath: 'id', autoIncrement: true });
+                }
+            };
+        }
+
+        // 数据导出功能
+        function exportData() {
+            const todos = JSON.parse(localStorage.getItem('todos')) || [];
+            const resources = JSON.parse(localStorage.getItem('resources')) || [];
+            const data = {
+                todos: todos,
+                resources: resources,
+                exportDate: new Date().toISOString()
+            };
+            const dataStr = JSON.stringify(data, null, 2);
+            document.getElementById('data-export').value = dataStr;
+            showNotification('数据导出成功', 'success');
+        }
+
+        // 数据导入功能
+        function importData() {
+            const dataStr = document.getElementById('data-export').value;
+            if (!dataStr) {
+                showNotification('请先粘贴要导入的数据', 'error');
+                return;
+            }
+            
+            try {
+                const data = JSON.parse(dataStr);
+                if (data.todos) {
+                    localStorage.setItem('todos', JSON.stringify(data.todos));
+                }
+                if (data.resources) {
+                    localStorage.setItem('resources', JSON.stringify(data.resources));
+                }
+                loadTodos();
+                loadResources();
+                showNotification('数据导入成功', 'success');
+            } catch (error) {
+                showNotification('数据格式错误，请检查输入', 'error');
+            }
+        }
+
+        // 复制数据到剪贴板
+        function copyData() {
+            const dataStr = document.getElementById('data-export').value;
+            if (!dataStr) {
+                showNotification('没有可复制的数据', 'error');
+                return;
+            }
+            
+            navigator.clipboard.writeText(dataStr).then(function() {
+                showNotification('数据已复制到剪贴板', 'success');
+            }).catch(function() {
+                showNotification('复制失败，请手动复制', 'error');
+            });
+        }
+
+        // 清空所有数据
+        function clearData() {
+            if (confirm('确定要清空所有数据吗？此操作不可恢复！')) {
+                localStorage.removeItem('todos');
+                localStorage.removeItem('resources');
+                loadTodos();
+                loadResources();
+                document.getElementById('data-export').value = '';
+                showNotification('所有数据已清空', 'success');
+            }
+        }
+
+        // 显示通知
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(function() {
+                notification.remove();
+            }, 3000);
+        }
+
+        // 优化移动端输入体验
+        function addTodo() {
+            const input = document.getElementById('todo-input');
+            const text = input.value.trim();
+            
+            if (text) {
+                const todos = JSON.parse(localStorage.getItem('todos')) || [];
+                todos.push({ text, completed: false });
+                localStorage.setItem('todos', JSON.stringify(todos));
+                input.value = '';
+                loadTodos();
+                showNotification('任务添加成功', 'success');
+            }
+        }
+
+        function addResource() {
+            const name = document.getElementById('resource-name').value.trim();
+            const url = document.getElementById('resource-url').value.trim();
+            const category = document.getElementById('resource-category').value;
+            
+            if (name && url) {
+                const resources = JSON.parse(localStorage.getItem('resources')) || [];
+                resources.push({ name, url, category });
+                localStorage.setItem('resources', JSON.stringify(resources));
+                document.getElementById('resource-name').value = '';
+                document.getElementById('resource-url').value = '';
+                loadResources();
+                showNotification('资源添加成功', 'success');
+            }
+        }
+    </script>
+</body>
+</html>
