@@ -13,11 +13,15 @@
         }
 
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'KaiTi', '楷体', serif;
             background-color: #f8f9fa;
             color: #333;
             line-height: 1.6;
             background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'KaiTi', '楷体', serif;
         }
 
         /* 主容器 */
@@ -182,7 +186,7 @@
         /* 待办事项样式 */
         .todo-section {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 25px;
             grid-column: 1 / -1;
             margin-bottom: 30px;
@@ -218,7 +222,6 @@
             background-color: #f8f9fa;
             border-radius: 10px;
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            border-left: 4px solid #3498db;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
@@ -235,8 +238,45 @@
             color: #7f8c8d;
         }
 
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #3498db;
+            border-radius: 50%;
+            margin-right: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .todo-checkbox.checked {
+            background-color: #2ecc71;
+            border-color: #2ecc71;
+        }
+
+        .todo-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
         .todo-content {
             flex: 1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .todo-content:hover {
+            color: #3498db;
+        }
+
+        .todo-date {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 4px;
         }
 
         .todo-actions {
@@ -260,12 +300,45 @@
         .calendar-small {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
+            gap: 4px;
             background: #fff;
             border-radius: 12px;
-            padding: 20px;
+            padding: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
+
+        .calendar-day-small {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding: 4px;
+            border-radius: 6px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            position: relative;
+        }
+
+        .calendar-day-small .date-number {
+            font-weight: bold;
+            margin-bottom: 1px;
+        }
+
+        .calendar-day-small .ddl-info {
+                font-size: 14px;
+                line-height: 1.2;
+                color: #c62828;
+                margin-top: 1px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
 
         .calendar-header {
             grid-column: 1 / -1;
@@ -283,22 +356,6 @@
             padding: 8px;
         }
 
-        .calendar-day-small {
-            aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: flex-start;
-            padding: 8px;
-            border-radius: 8px;
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            position: relative;
-        }
-
         .calendar-day-small:hover {
             background: #e3f2fd;
             transform: scale(1.1);
@@ -312,23 +369,6 @@
         .calendar-day-small.has-ddl {
             background: #ffebee;
             color: #c62828;
-        }
-
-        .calendar-day-small .date-number {
-            font-weight: bold;
-            margin-bottom: 2px;
-        }
-
-        .calendar-day-small .ddl-info {
-            font-size: 10px;
-            line-height: 1.2;
-            color: #c62828;
-            margin-top: 2px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
         }
 
         /* 专注功能样式 */
@@ -440,6 +480,7 @@
             font-weight: bold;
             margin-bottom: 5px;
             color: #2c3e50;
+            text-align: center;
         }
 
         .resource-url {
@@ -624,21 +665,60 @@
             }
 
             .calendar-day-small .ddl-info {
-                font-size: 8px;
+                font-size: 14px;
             }
+        }
+
+        /* 备忘录样式 */
+        .note-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .note-item {
+            padding: 15px;
+            margin-bottom: 12px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .note-item:hover {
+            background-color: #e3f2fd;
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .note-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .note-content {
+            font-size: 14px;
+            color: #34495e;
+            margin-bottom: 5px;
+        }
+
+        .note-date {
+            font-size: 12px;
+            color: #7f8c8d;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>个人学习助手</h1>
+            <h1>🌿干草成长日志🌿</h1>
         </header>
 
         <!-- 待办事项功能 -->
         <div class="todo-section">
             <div class="todo-card">
-                <h2>今日待办</h2>
+                <h2>📖今日待办📈</h2>
                 <div class="input-group">
                     <input type="text" id="todo-input" placeholder="添加新任务...">
                     <button onclick="addTodo()">添加</button>
@@ -648,7 +728,7 @@
                 </ul>
             </div>
             <div class="todo-card">
-                <h2>长期待办</h2>
+                <h2>🛡️长期待办🪜</h2>
                 <div class="input-group">
                     <input type="text" id="long-todo-input" placeholder="添加长期任务...">
                     <button onclick="addLongTodo()">添加</button>
@@ -657,12 +737,31 @@
                     <!-- 长期待办事项将通过JavaScript动态生成 -->
                 </ul>
             </div>
+            <div class="todo-card">
+                <h2>✅完成待办✅</h2>
+                <ul class="todo-list" id="completed-todo-list">
+                    <!-- 完成的待办事项将通过JavaScript动态生成 -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- 备忘录功能 -->
+        <div class="card">
+            <h2>🐠🐟偶记忆只有7s🐙♓</h2>
+            <div class="input-group">
+                <input type="text" id="note-title" placeholder="备忘录标题...">
+                <input type="text" id="note-content" placeholder="备忘录内容...">
+                <button onclick="addNote()">添加</button>
+            </div>
+            <ul class="note-list" id="note-list">
+                <!-- 备忘录将通过JavaScript动态生成 -->
+            </ul>
         </div>
 
         <div class="grid-container">
             <!-- 专注功能 -->
             <div class="card focus-section">
-                <h2>专注</h2>
+                <h2>🤖干草成长中👀</h2>
                 <div class="focus-timer" id="focus-timer">00:00:00</div>
                 <div class="focus-controls">
                     <button onclick="startFocus()">开始</button>
@@ -691,7 +790,7 @@
 
             <!-- 学习资源功能 -->
             <div class="card">
-                <h2>学习资源</h2>
+                <h2>🛠️学习资源🤩</h2>
                 <div class="input-group">
                     <input type="text" id="resource-name" placeholder="资源名称...">
                     <input type="url" id="resource-url" placeholder="网址...">
@@ -710,7 +809,7 @@
 
             <!-- 鸡汤模块 -->
             <div class="card motivation-section">
-                <h2>浇灌干草</h2>
+                <h2>🌿浇灌干草🌿</h2>
                 <div class="motivation-content" id="motivation-content">
                     <!-- 鸡汤内容将通过JavaScript动态生成 -->
                 </div>
@@ -724,7 +823,7 @@
 
         <!-- DDL日历 -->
         <div class="card ddl-section">
-            <h2>重要DDL</h2>
+            <h2>💥重要DDL‼️</h2>
             <div class="ddl-controls">
                 <button class="secondary" onclick="changeMonth(-1)">&lt; 上月</button>
                 <div id="current-month" style="font-weight: bold; min-width: 120px; text-align: center;"></div>
@@ -742,11 +841,11 @@
 
         <!-- 数据同步 -->
         <div class="card">
-            <h2>数据管理</h2>
+            <h2>👾数据管理👹</h2>
             <div class="sync-section">
                 <div class="sync-buttons">
                     <button onclick="exportData()">导出数据</button>
-                    <button onclick="syncData()">同步数据</button>
+                    <button onclick="importData()">导入数据</button>
                 </div>
                 <textarea id="data-export" placeholder="导出的数据将显示在这里..."></textarea>
                 <div class="sync-buttons">
@@ -763,11 +862,13 @@
         var STORAGE_KEYS = {
             todos: 'learning_assistant_todos',
             longTodos: 'learning_assistant_long_todos',
+            completedTodos: 'learning_assistant_completed_todos',
             ddls: 'learning_assistant_ddls',
             resources: 'learning_assistant_resources',
             focusStats: 'learning_assistant_focus_stats',
             focusHistory: 'learning_assistant_focus_history',
-            motivations: 'learning_assistant_motivations'
+            motivations: 'learning_assistant_motivations',
+            notes: 'learning_assistant_notes'
         };
 
         // 初始化数据
@@ -780,6 +881,11 @@
             // 初始化长期待办事项
             if (!localStorage.getItem(STORAGE_KEYS.longTodos)) {
                 localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify([]));
+            }
+            
+            // 初始化完成待办事项
+            if (!localStorage.getItem(STORAGE_KEYS.completedTodos)) {
+                localStorage.setItem(STORAGE_KEYS.completedTodos, JSON.stringify([]));
             }
             
             // 初始化DDL
@@ -816,6 +922,11 @@
                 ];
                 localStorage.setItem(STORAGE_KEYS.motivations, JSON.stringify(defaultMotivations));
             }
+            
+            // 初始化备忘录
+            if (!localStorage.getItem(STORAGE_KEYS.notes)) {
+                localStorage.setItem(STORAGE_KEYS.notes, JSON.stringify([]));
+            }
         }
 
         // 待办事项功能
@@ -829,13 +940,12 @@
                     var li = document.createElement('li');
                     li.className = 'todo-item';
                     li.innerHTML = [
-                        '<div class="todo-content">' + todo.text + '</div>',
-                        '<div class="todo-actions">',
-                            '<button onclick="toggleTodo(' + index + ')">完成</button>',
-                            '<button class="secondary" onclick="editTodo(' + index + ')">编辑</button>',
-                            '<button class="danger" onclick="deleteTodo(' + index + ')">删除</button>',
-                        '</div>'
-                    ].join('');
+                    '<div class="todo-checkbox" onclick="toggleTodo(' + index + ')\"></div>',
+                    '<div class="todo-content" onclick="editTodo(' + index + ')">',
+                        '<div>' + todo.text + '</div>',
+                        '<div class="todo-date">' + formatDate(todo.created) + '</div>',
+                    '</div>',
+                ].join('');
                     todoList.appendChild(li);
                 }
             });
@@ -857,9 +967,21 @@
 
         function toggleTodo(index) {
             var todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
-            todos[index].completed = true;
+            var completedTodo = todos[index];
+            completedTodo.completed = true;
+            completedTodo.completedDate = new Date().toISOString();
+            
+            // 从待办列表中移除
+            todos.splice(index, 1);
             localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(todos));
+            
+            // 添加到完成列表
+            var completedTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.completedTodos)) || [];
+            completedTodos.push(completedTodo);
+            localStorage.setItem(STORAGE_KEYS.completedTodos, JSON.stringify(completedTodos));
+            
             loadTodos();
+            loadCompletedTodos();
             showNotification('任务已标记为完成', 'success');
         }
 
@@ -896,13 +1018,12 @@
                     var li = document.createElement('li');
                     li.className = 'todo-item';
                     li.innerHTML = [
-                        '<div class="todo-content">' + todo.text + '</div>',
-                        '<div class="todo-actions">',
-                            '<button onclick="toggleLongTodo(' + index + ')">完成</button>',
-                            '<button class="secondary" onclick="editLongTodo(' + index + ')">编辑</button>',
-                            '<button class="danger" onclick="deleteLongTodo(' + index + ')">删除</button>',
-                        '</div>'
-                    ].join('');
+                    '<div class="todo-checkbox" onclick="toggleLongTodo(' + index + ')\"></div>',
+                    '<div class="todo-content" onclick="editLongTodo(' + index + ')">',
+                        '<div>' + todo.text + '</div>',
+                        '<div class="todo-date">' + formatDate(todo.created) + '</div>',
+                    '</div>',
+                ].join('');
                     longTodoList.appendChild(li);
                 }
             });
@@ -924,9 +1045,21 @@
 
         function toggleLongTodo(index) {
             var longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
-            longTodos[index].completed = true;
+            var completedTodo = longTodos[index];
+            completedTodo.completed = true;
+            completedTodo.completedDate = new Date().toISOString();
+            
+            // 从长期待办列表中移除
+            longTodos.splice(index, 1);
             localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(longTodos));
+            
+            // 添加到完成列表
+            var completedTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.completedTodos)) || [];
+            completedTodos.push(completedTodo);
+            localStorage.setItem(STORAGE_KEYS.completedTodos, JSON.stringify(completedTodos));
+            
             loadLongTodos();
+            loadCompletedTodos();
             showNotification('长期任务已标记为完成', 'success');
         }
 
@@ -1102,6 +1235,12 @@
             if (focusTimer) {
                 clearInterval(focusTimer);
                 focusTimer = null;
+                // 保存已专注的时间
+                if (focusSeconds > 0) {
+                    updateFocusStats(focusSeconds);
+                    focusSeconds = 0;
+                    updateFocusTimerDisplay();
+                }
                 showNotification('专注暂停', 'info');
             }
         }
@@ -1110,6 +1249,10 @@
             if (focusTimer) {
                 clearInterval(focusTimer);
                 focusTimer = null;
+                // 保存已专注的时间
+                if (focusSeconds > 0) {
+                    updateFocusStats(focusSeconds);
+                }
             }
             focusSeconds = 0;
             updateFocusTimerDisplay();
@@ -1308,11 +1451,13 @@
             var data = {
                 todos: JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [],
                 longTodos: JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [],
+                completedTodos: JSON.parse(localStorage.getItem(STORAGE_KEYS.completedTodos)) || [],
                 ddls: JSON.parse(localStorage.getItem(STORAGE_KEYS.ddls)) || [],
                 resources: JSON.parse(localStorage.getItem(STORAGE_KEYS.resources)) || [],
                 focusStats: JSON.parse(localStorage.getItem(STORAGE_KEYS.focusStats)) || {},
                 focusHistory: JSON.parse(localStorage.getItem(STORAGE_KEYS.focusHistory)) || [],
                 motivations: JSON.parse(localStorage.getItem(STORAGE_KEYS.motivations)) || [],
+                notes: JSON.parse(localStorage.getItem(STORAGE_KEYS.notes)) || [],
                 exportDate: new Date().toISOString()
             };
             var dataStr = JSON.stringify(data, null, 2);
@@ -1320,7 +1465,7 @@
             showNotification('数据导出成功', 'success');
         }
 
-        function syncData() {
+        function importData() {
             var dataStr = document.getElementById('data-export').value;
             if (!dataStr) {
                 showNotification('请先粘贴数据到文本框', 'error');
@@ -1328,142 +1473,34 @@
             }
             
             try {
-                var importedData = JSON.parse(dataStr);
+                var data = JSON.parse(dataStr);
                 
-                // 同步待办事项
-                var currentTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
-                var newTodos = importedData.todos || [];
-                var mergedTodos = mergeTodos(currentTodos, newTodos);
-                localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(mergedTodos));
-                
-                // 同步长期待办事项
-                var currentLongTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
-                var newLongTodos = importedData.longTodos || [];
-                var mergedLongTodos = mergeTodos(currentLongTodos, newLongTodos);
-                localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(mergedLongTodos));
-                
-                // 同步DDL
-                var currentDDLs = JSON.parse(localStorage.getItem(STORAGE_KEYS.ddls)) || [];
-                var newDDLs = importedData.ddls || [];
-                var mergedDDLs = mergeDDLs(currentDDLs, newDDLs);
-                localStorage.setItem(STORAGE_KEYS.ddls, JSON.stringify(mergedDDLs));
-                
-                // 同步学习资源
-                var currentResources = JSON.parse(localStorage.getItem(STORAGE_KEYS.resources)) || [];
-                var newResources = importedData.resources || [];
-                var mergedResources = mergeResources(currentResources, newResources);
-                localStorage.setItem(STORAGE_KEYS.resources, JSON.stringify(mergedResources));
-                
-                // 同步专注历史
-                var currentFocusHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.focusHistory)) || [];
-                var newFocusHistory = importedData.focusHistory || [];
-                var mergedFocusHistory = mergeFocusHistory(currentFocusHistory, newFocusHistory);
-                localStorage.setItem(STORAGE_KEYS.focusHistory, JSON.stringify(mergedFocusHistory));
-                
-                // 同步鸡汤
-                var currentMotivations = JSON.parse(localStorage.getItem(STORAGE_KEYS.motivations)) || [];
-                var newMotivations = importedData.motivations || [];
-                var mergedMotivations = mergeMotivations(currentMotivations, newMotivations);
-                localStorage.setItem(STORAGE_KEYS.motivations, JSON.stringify(mergedMotivations));
-                
-                // 重新计算专注统计
-                updateFocusStats(0);
+                // 导入所有数据
+                if (data.todos) localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(data.todos));
+                if (data.longTodos) localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(data.longTodos));
+                if (data.completedTodos) localStorage.setItem(STORAGE_KEYS.completedTodos, JSON.stringify(data.completedTodos));
+                if (data.ddls) localStorage.setItem(STORAGE_KEYS.ddls, JSON.stringify(data.ddls));
+                if (data.resources) localStorage.setItem(STORAGE_KEYS.resources, JSON.stringify(data.resources));
+                if (data.focusStats) localStorage.setItem(STORAGE_KEYS.focusStats, JSON.stringify(data.focusStats));
+                if (data.focusHistory) localStorage.setItem(STORAGE_KEYS.focusHistory, JSON.stringify(data.focusHistory));
+                if (data.motivations) localStorage.setItem(STORAGE_KEYS.motivations, JSON.stringify(data.motivations));
+                if (data.notes) localStorage.setItem(STORAGE_KEYS.notes, JSON.stringify(data.notes));
                 
                 // 重新加载所有数据
                 loadTodos();
                 loadLongTodos();
+                loadCompletedTodos();
                 renderDDLCalendar();
                 loadResources();
                 loadFocusStats();
-                renderFocusChart(mergedFocusHistory);
+                renderFocusChart(JSON.parse(localStorage.getItem(STORAGE_KEYS.focusHistory)) || []);
                 loadMotivation();
+                loadNotes();
                 
-                showNotification('数据同步成功', 'success');
+                showNotification('数据导入成功', 'success');
             } catch (e) {
-                showNotification('数据格式错误，同步失败', 'error');
+                showNotification('数据格式错误，导入失败', 'error');
             }
-        }
-
-        // 合并待办事项
-        function mergeTodos(current, imported) {
-            var merged = [...current];
-            imported.forEach(function(item) {
-                // 检查是否已存在相同的任务
-                var exists = merged.some(function(existing) {
-                    return existing.text === item.text && existing.completed === item.completed;
-                });
-                if (!exists) {
-                    merged.push(item);
-                }
-            });
-            return merged;
-        }
-
-        // 合并DDL
-        function mergeDDLs(current, imported) {
-            var merged = [...current];
-            imported.forEach(function(item) {
-                // 检查是否已存在相同的DDL
-                var exists = merged.some(function(existing) {
-                    return existing.title === item.title && existing.time === item.time;
-                });
-                if (!exists) {
-                    merged.push(item);
-                }
-            });
-            return merged;
-        }
-
-        // 合并学习资源
-        function mergeResources(current, imported) {
-            var merged = [...current];
-            imported.forEach(function(item) {
-                // 检查是否已存在相同的资源
-                var exists = merged.some(function(existing) {
-                    return existing.url === item.url;
-                });
-                if (!exists) {
-                    merged.push(item);
-                }
-            });
-            return merged;
-        }
-
-        // 合并专注历史
-        function mergeFocusHistory(current, imported) {
-            var merged = [...current];
-            imported.forEach(function(item) {
-                // 检查是否已存在相同日期的记录
-                var existingIndex = merged.findIndex(function(existing) {
-                    return existing.date === item.date;
-                });
-                if (existingIndex === -1) {
-                    merged.push(item);
-                } else {
-                    // 如果存在，取较大的值
-                    if (item.duration > merged[existingIndex].duration) {
-                        merged[existingIndex].duration = item.duration;
-                    }
-                }
-            });
-            // 只保留近30天的记录
-            var thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-            return merged.filter(function(item) {
-                return new Date(item.date) >= thirtyDaysAgo;
-            });
-        }
-
-        // 合并鸡汤
-        function mergeMotivations(current, imported) {
-            var merged = [...current];
-            imported.forEach(function(item) {
-                // 检查是否已存在相同的鸡汤
-                if (!merged.includes(item)) {
-                    merged.push(item);
-                }
-            });
-            return merged;
         }
 
         function copyData() {
@@ -1507,15 +1544,145 @@
                 // 重新加载所有数据
                 loadTodos();
                 loadLongTodos();
+                loadCompletedTodos();
                 renderDDLCalendar();
                 loadResources();
                 loadFocusStats();
                 renderFocusChart([]);
                 loadMotivation();
+                loadNotes();
                 
                 document.getElementById('data-export').value = '';
                 showNotification('所有数据已清空', 'success');
             }
+        }
+
+        // 加载完成待办事项
+        function loadCompletedTodos() {
+            var completedTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.completedTodos)) || [];
+            var completedTodoList = document.getElementById('completed-todo-list');
+            completedTodoList.innerHTML = '';
+            
+            // 按日期分组
+            var todosByDate = {};
+            completedTodos.forEach(function(todo) {
+                var date = new Date(todo.completedDate).toDateString();
+                if (!todosByDate[date]) {
+                    todosByDate[date] = [];
+                }
+                todosByDate[date].push(todo);
+            });
+            
+            // 按日期排序并显示
+            var dates = Object.keys(todosByDate).sort(function(a, b) {
+                return new Date(b) - new Date(a);
+            });
+            
+            dates.forEach(function(date) {
+                var dateHeader = document.createElement('div');
+                dateHeader.style.fontWeight = 'bold';
+                dateHeader.style.marginBottom = '10px';
+                dateHeader.style.color = '#3498db';
+                dateHeader.textContent = formatDate(date);
+                completedTodoList.appendChild(dateHeader);
+                
+                todosByDate[date].forEach(function(todo) {
+                    var li = document.createElement('li');
+                    li.className = 'todo-item';
+                    li.innerHTML = [
+                        '<div class="todo-checkbox checked"></div>',
+                        '<div class="todo-content">',
+                            '<div style="text-decoration: line-through; color: #7f8c8d;">' + todo.text + '</div>',
+                            '<div class="todo-date">' + formatDate(todo.created) + '</div>',
+                        '</div>'
+                    ].join('');
+                    completedTodoList.appendChild(li);
+                });
+            });
+        }
+
+        // 删除完成待办事项
+        function deleteCompletedTodo(index) {
+            if (confirm('确定要删除这个完成的任务吗？')) {
+                var completedTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.completedTodos)) || [];
+                completedTodos.splice(index, 1);
+                localStorage.setItem(STORAGE_KEYS.completedTodos, JSON.stringify(completedTodos));
+                loadCompletedTodos();
+                showNotification('任务删除成功', 'success');
+            }
+        }
+
+        // 备忘录功能
+        function loadNotes() {
+            var notes = JSON.parse(localStorage.getItem(STORAGE_KEYS.notes)) || [];
+            var noteList = document.getElementById('note-list');
+            noteList.innerHTML = '';
+            
+            notes.forEach(function(note, index) {
+                var li = document.createElement('li');
+                li.className = 'note-item';
+                li.innerHTML = [
+                    '<div class="note-title">' + note.title + '</div>',
+                    '<div class="note-content">' + note.content + '</div>',
+                    '<div class="note-date">' + formatDate(note.created) + '</div>',
+                    '<div class="todo-actions">',
+                        '<button class="secondary" onclick="editNote(' + index + ')">编辑</button>',
+                        '<button class="danger" onclick="deleteNote(' + index + ')">删除</button>',
+                    '</div>'
+                ].join('');
+                noteList.appendChild(li);
+            });
+        }
+
+        function addNote() {
+            var title = document.getElementById('note-title').value.trim();
+            var content = document.getElementById('note-content').value.trim();
+            
+            if (title && content) {
+                var notes = JSON.parse(localStorage.getItem(STORAGE_KEYS.notes)) || [];
+                notes.push({ title: title, content: content, created: new Date().toISOString() });
+                localStorage.setItem(STORAGE_KEYS.notes, JSON.stringify(notes));
+                
+                // 清空输入
+                document.getElementById('note-title').value = '';
+                document.getElementById('note-content').value = '';
+                
+                loadNotes();
+                showNotification('备忘录添加成功', 'success');
+            } else {
+                showNotification('请填写完整备忘录信息', 'error');
+            }
+        }
+
+        function editNote(index) {
+            var notes = JSON.parse(localStorage.getItem(STORAGE_KEYS.notes)) || [];
+            var note = notes[index];
+            var newTitle = prompt('编辑标题:', note.title);
+            var newContent = prompt('编辑内容:', note.content);
+            
+            if (newTitle !== null && newContent !== null) {
+                notes[index].title = newTitle.trim();
+                notes[index].content = newContent.trim();
+                localStorage.setItem(STORAGE_KEYS.notes, JSON.stringify(notes));
+                loadNotes();
+                showNotification('备忘录更新成功', 'success');
+            }
+        }
+
+        function deleteNote(index) {
+            if (confirm('确定要删除这个备忘录吗？')) {
+                var notes = JSON.parse(localStorage.getItem(STORAGE_KEYS.notes)) || [];
+                notes.splice(index, 1);
+                localStorage.setItem(STORAGE_KEYS.notes, JSON.stringify(notes));
+                loadNotes();
+                showNotification('备忘录删除成功', 'success');
+            }
+        }
+
+        // 格式化日期
+        function formatDate(dateString) {
+            var date = new Date(dateString);
+            return date.getFullYear() + '年' + (date.getMonth() + 1) + '月' + date.getDate() + '日';
         }
 
         // 显示通知
@@ -1535,11 +1702,13 @@
             initData();
             loadTodos();
             loadLongTodos();
+            loadCompletedTodos();
             renderDDLCalendar();
             loadResources();
             loadFocusStats();
             renderFocusChart(JSON.parse(localStorage.getItem(STORAGE_KEYS.focusHistory)) || []);
             loadMotivation();
+            loadNotes();
         });
     </script>
 </body>
