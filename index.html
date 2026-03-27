@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌿干草成长日志🌿</title>
-    <!-- 引入腾讯云开发 SDK -->
-    <script src="https://imgcache.qq.com/qcloud/tcbjs/1.11.1/tcb.js"></script>
     <style>
         /* 全局样式 */
         * {
@@ -315,7 +313,7 @@
             flex-direction: column;
             align-items: flex-start;
             justify-content: flex-start;
-            padding: 2px;
+            padding: 4px;
             border-radius: 6px;
             background: #f8f9fa;
             border: 1px solid #e0e0e0;
@@ -323,12 +321,11 @@
             transition: all 0.3s ease;
             font-size: 12px;
             position: relative;
-            line-height: 1.2;
         }
 
         .calendar-day-small .date-number {
             font-weight: bold;
-            margin-bottom: 2px;
+            margin-bottom: 0.5px;
             font-size: 12px;
             line-height: 0.9;
         }
@@ -871,13 +868,6 @@
     </div>
 
     <script>
-        // 初始化腾讯云开发
-        var app = tcb.init({
-            env: 'learning-assistant-6d136948e9fbb' // 替换为你的云开发环境ID
-        });
-        var db = app.database();
-        var user = { uid: '100047582156' }; // 使用固定的用户ID
-        
         // 数据存储键名
         var STORAGE_KEYS = {
             todos: 'learning_assistant_todos',
@@ -892,56 +882,66 @@
         };
 
         // 初始化数据
-        async function initData() {
-            // 初始化云数据库集合
-            var collections = [
-                'todos', 'longTodos', 'completedTodos', 'ddls', 
-                'resources', 'focusStats', 'focusHistory', 'motivations', 'notes'
-            ];
+        function initData() {
+            // 初始化待办事项
+            if (!localStorage.getItem(STORAGE_KEYS.todos)) {
+                localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify([]));
+            }
             
-            // 检查并初始化默认数据
-            for (var i = 0; i < collections.length; i++) {
-                var collection = collections[i];
-                var result = await db.collection(collection).where({_openid: user.uid}).get();
-                if (result.data.length === 0) {
-                    if (collection === 'motivations') {
-                        // 初始化鸡汤数据
-                        var defaultMotivations = [
-                            "学而时习之，不亦说乎？",
-                            "温故而知新，可以为师矣。",
-                            "学而不思则罔，思而不学则殆。",
-                            "知之者不如好之者，好之者不如乐之者。",
-                            "三人行，必有我师焉。择其善者而从之，其不善者而改之。"
-                        ];
-                        await db.collection(collection).add({
-                            _openid: user.uid,
-                            data: defaultMotivations,
-                            updatedAt: new Date().toISOString()
-                        });
-                    } else if (collection === 'focusStats') {
-                        // 初始化专注统计数据
-                        await db.collection(collection).add({
-                            _openid: user.uid,
-                            today: 0,
-                            average30Days: 0,
-                            updatedAt: new Date().toISOString()
-                        });
-                    } else {
-                        // 初始化其他空数组数据
-                        await db.collection(collection).add({
-                            _openid: user.uid,
-                            data: [],
-                            updatedAt: new Date().toISOString()
-                        });
-                    }
-                }
+            // 初始化长期待办事项
+            if (!localStorage.getItem(STORAGE_KEYS.longTodos)) {
+                localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify([]));
+            }
+            
+            // 初始化完成待办事项
+            if (!localStorage.getItem(STORAGE_KEYS.completedTodos)) {
+                localStorage.setItem(STORAGE_KEYS.completedTodos, JSON.stringify([]));
+            }
+            
+            // 初始化DDL
+            if (!localStorage.getItem(STORAGE_KEYS.ddls)) {
+                localStorage.setItem(STORAGE_KEYS.ddls, JSON.stringify([]));
+            }
+            
+            // 初始化学习资源
+            if (!localStorage.getItem(STORAGE_KEYS.resources)) {
+                localStorage.setItem(STORAGE_KEYS.resources, JSON.stringify([]));
+            }
+            
+            // 初始化专注统计
+            if (!localStorage.getItem(STORAGE_KEYS.focusStats)) {
+                localStorage.setItem(STORAGE_KEYS.focusStats, JSON.stringify({
+                    today: 0,
+                    average30Days: 0
+                }));
+            }
+            
+            // 初始化专注历史
+            if (!localStorage.getItem(STORAGE_KEYS.focusHistory)) {
+                localStorage.setItem(STORAGE_KEYS.focusHistory, JSON.stringify([]));
+            }
+            
+            // 初始化鸡汤
+            if (!localStorage.getItem(STORAGE_KEYS.motivations)) {
+                var defaultMotivations = [
+                    "学而时习之，不亦说乎？",
+                    "温故而知新，可以为师矣。",
+                    "学而不思则罔，思而不学则殆。",
+                    "知之者不如好之者，好之者不如乐之者。",
+                    "三人行，必有我师焉。择其善者而从之，其不善者而改之。"
+                ];
+                localStorage.setItem(STORAGE_KEYS.motivations, JSON.stringify(defaultMotivations));
+            }
+            
+            // 初始化备忘录
+            if (!localStorage.getItem(STORAGE_KEYS.notes)) {
+                localStorage.setItem(STORAGE_KEYS.notes, JSON.stringify([]));
             }
         }
 
         // 待办事项功能
-        async function loadTodos() {
-            var result = await db.collection('todos').where({_openid: user.uid}).get();
-            var todos = result.data.length > 0 ? result.data[0].data : [];
+        function loadTodos() {
+            var todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
             var todoList = document.getElementById('todo-list');
             todoList.innerHTML = '';
             
@@ -950,7 +950,7 @@
                     var li = document.createElement('li');
                     li.className = 'todo-item';
                     li.innerHTML = [
-                    '<div class="todo-checkbox" onclick="toggleTodo(' + index + ')"></div>',
+                    '<div class="todo-checkbox" onclick="toggleTodo(' + index + ')\"></div>',
                     '<div class="todo-content" onclick="editTodo(' + index + ')">',
                         '<div>' + todo.text + '</div>',
                         '<div class="todo-date">' + formatDate(todo.created) + '</div>',
@@ -961,83 +961,48 @@
             });
         }
 
-        async function addTodo() {
+        function addTodo() {
             var input = document.getElementById('todo-input');
             var text = input.value.trim();
             
             if (text) {
-                var result = await db.collection('todos').where({_openid: user.uid}).get();
-                var todos = result.data.length > 0 ? result.data[0].data : [];
+                var todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
                 todos.push({ text: text, completed: false, created: new Date().toISOString() });
-                
-                if (result.data.length > 0) {
-                    await db.collection('todos').doc(result.data[0]._id).update({
-                        data: todos,
-                        updatedAt: new Date().toISOString()
-                    });
-                } else {
-                    await db.collection('todos').add({
-                        _openid: user.uid,
-                        data: todos,
-                        updatedAt: new Date().toISOString()
-                    });
-                }
-                
+                localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(todos));
                 input.value = '';
-                await loadTodos();
+                loadTodos();
                 showNotification('任务添加成功', 'success');
             }
         }
 
-        async function toggleTodo(index) {
-            var result = await db.collection('todos').where({_openid: user.uid}).get();
-            var todos = result.data.length > 0 ? result.data[0].data : [];
+        function toggleTodo(index) {
+            var todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
             var completedTodo = todos[index];
             completedTodo.completed = true;
             completedTodo.completedDate = new Date().toISOString();
             
             // 从待办列表中移除
             todos.splice(index, 1);
-            await db.collection('todos').doc(result.data[0]._id).update({
-                data: todos,
-                updatedAt: new Date().toISOString()
-            });
+            localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(todos));
             
             // 添加到完成列表
-            var completedResult = await db.collection('completedTodos').where({_openid: user.uid}).get();
-            var completedTodos = completedResult.data.length > 0 ? completedResult.data[0].data : [];
+            var completedTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.completedTodos)) || [];
             completedTodos.push(completedTodo);
+            localStorage.setItem(STORAGE_KEYS.completedTodos, JSON.stringify(completedTodos));
             
-            if (completedResult.data.length > 0) {
-                await db.collection('completedTodos').doc(completedResult.data[0]._id).update({
-                    data: completedTodos,
-                    updatedAt: new Date().toISOString()
-                });
-            } else {
-                await db.collection('completedTodos').add({
-                    _openid: user.uid,
-                    data: completedTodos,
-                    updatedAt: new Date().toISOString()
-                });
-            }
-            
-            await loadTodos();
-            await loadCompletedTodos();
+            loadTodos();
+            loadCompletedTodos();
             showNotification('任务已标记为完成', 'success');
         }
 
-        async function editTodo(index) {
-            var result = await db.collection('todos').where({_openid: user.uid}).get();
-            var todos = result.data.length > 0 ? result.data[0].data : [];
+        function editTodo(index) {
+            var todos = JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [];
             var newText = prompt('编辑任务:', todos[index].text);
             
             if (newText !== null && newText.trim()) {
                 todos[index].text = newText.trim();
-                await db.collection('todos').doc(result.data[0]._id).update({
-                    data: todos,
-                    updatedAt: new Date().toISOString()
-                });
-                await loadTodos();
+                localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(todos));
+                loadTodos();
                 showNotification('任务更新成功', 'success');
             }
         }
@@ -1053,9 +1018,8 @@
         }
 
         // 长期待办事项功能
-        async function loadLongTodos() {
-            var result = await db.collection('longTodos').where({_openid: user.uid}).get();
-            var longTodos = result.data.length > 0 ? result.data[0].data : [];
+        function loadLongTodos() {
+            var longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
             var longTodoList = document.getElementById('long-todo-list');
             longTodoList.innerHTML = '';
             
@@ -1064,7 +1028,7 @@
                     var li = document.createElement('li');
                     li.className = 'todo-item';
                     li.innerHTML = [
-                    '<div class="todo-checkbox" onclick="toggleLongTodo(' + index + ')"></div>',
+                    '<div class="todo-checkbox" onclick="toggleLongTodo(' + index + ')\"></div>',
                     '<div class="todo-content" onclick="editLongTodo(' + index + ')">',
                         '<div>' + todo.text + '</div>',
                         '<div class="todo-date">' + formatDate(todo.created) + '</div>',
@@ -1075,101 +1039,58 @@
             });
         }
 
-        async function addLongTodo() {
+        function addLongTodo() {
             var input = document.getElementById('long-todo-input');
             var text = input.value.trim();
             
             if (text) {
-                var result = await db.collection('longTodos').where({_openid: user.uid}).get();
-                var longTodos = result.data.length > 0 ? result.data[0].data : [];
+                var longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
                 longTodos.push({ text: text, completed: false, created: new Date().toISOString() });
-                
-                if (result.data.length > 0) {
-                    await db.collection('longTodos').doc(result.data[0]._id).update({
-                        data: longTodos,
-                        updatedAt: new Date().toISOString()
-                    });
-                } else {
-                    await db.collection('longTodos').add({
-                        _openid: user.uid,
-                        data: longTodos,
-                        updatedAt: new Date().toISOString()
-                    });
-                }
-                
+                localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(longTodos));
                 input.value = '';
-                await loadLongTodos();
+                loadLongTodos();
                 showNotification('长期任务添加成功', 'success');
             }
         }
 
-        async function toggleLongTodo(index) {
-            var result = await db.collection('longTodos').where({_openid: user.uid}).get();
-            var longTodos = result.data.length > 0 ? result.data[0].data : [];
+        function toggleLongTodo(index) {
+            var longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
             var completedTodo = longTodos[index];
             completedTodo.completed = true;
             completedTodo.completedDate = new Date().toISOString();
             
             // 从长期待办列表中移除
             longTodos.splice(index, 1);
-            await db.collection('longTodos').doc(result.data[0]._id).update({
-                data: longTodos,
-                updatedAt: new Date().toISOString()
-            });
+            localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(longTodos));
             
             // 添加到完成列表
-            var completedResult = await db.collection('completedTodos').where({_openid: user.uid}).get();
-            var completedTodos = completedResult.data.length > 0 ? completedResult.data[0].data : [];
+            var completedTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.completedTodos)) || [];
             completedTodos.push(completedTodo);
+            localStorage.setItem(STORAGE_KEYS.completedTodos, JSON.stringify(completedTodos));
             
-            if (completedResult.data.length > 0) {
-                await db.collection('completedTodos').doc(completedResult.data[0]._id).update({
-                    data: completedTodos,
-                    updatedAt: new Date().toISOString()
-                });
-            } else {
-                await db.collection('completedTodos').add({
-                    _openid: user.uid,
-                    data: completedTodos,
-                    updatedAt: new Date().toISOString()
-                });
-            }
-            
-            await loadLongTodos();
-            await loadCompletedTodos();
+            loadLongTodos();
+            loadCompletedTodos();
             showNotification('长期任务已标记为完成', 'success');
         }
 
-        async function editLongTodo(index) {
-            var result = await db.collection('longTodos').where({_openid: user.uid}).get();
-            var longTodos = result.data.length > 0 ? result.data[0].data : [];
+        function editLongTodo(index) {
+            var longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
             var newText = prompt('编辑长期任务:', longTodos[index].text);
             
             if (newText !== null && newText.trim()) {
                 longTodos[index].text = newText.trim();
-                await db.collection('longTodos').doc(result.data[0]._id).update({
-                    data: longTodos,
-                    updatedAt: new Date().toISOString()
-                });
-                await loadLongTodos();
+                localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(longTodos));
+                loadLongTodos();
                 showNotification('长期任务更新成功', 'success');
             }
         }
 
-        async function deleteLongTodo(index) {
+        function deleteLongTodo(index) {
             if (confirm('确定要删除这个长期任务吗？')) {
-                var result = await db.collection('longTodos').where({_openid: user.uid}).get();
-                var longTodos = result.data.length > 0 ? result.data[0].data : [];
+                var longTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [];
                 longTodos.splice(index, 1);
-                
-                if (result.data.length > 0) {
-                    await db.collection('longTodos').doc(result.data[0]._id).update({
-                        data: longTodos,
-                        updatedAt: new Date().toISOString()
-                    });
-                }
-                
-                await loadLongTodos();
+                localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(longTodos));
+                loadLongTodos();
                 showNotification('长期任务删除成功', 'success');
             }
         }
@@ -1177,12 +1098,12 @@
         // DDL日历功能
         var currentDDLMonth = new Date();
 
-        async function changeMonth(direction) {
+        function changeMonth(direction) {
             currentDDLMonth.setMonth(currentDDLMonth.getMonth() + direction);
-            await renderDDLCalendar();
+            renderDDLCalendar();
         }
 
-        async function renderDDLCalendar() {
+        function renderDDLCalendar() {
             var calendar = document.getElementById('ddl-calendar');
             var monthElement = document.getElementById('current-month');
             
@@ -1209,8 +1130,7 @@
             }
             
             // 日期
-            var result = await db.collection('ddls').where({_openid: user.uid}).get();
-            var ddls = result.data.length > 0 ? result.data[0].data : [];
+            var ddls = JSON.parse(localStorage.getItem(STORAGE_KEYS.ddls)) || [];
             for (var day = 1; day <= daysInMonth; day++) {
                 var currentDate = new Date(year, month, day);
                 var isToday = currentDate.toDateString() === new Date().toDateString();
@@ -1237,9 +1157,8 @@
             calendar.innerHTML = calendarHTML;
         }
 
-        async function showDayDDLs(year, month, day) {
-            var result = await db.collection('ddls').where({_openid: user.uid}).get();
-            var ddls = result.data.length > 0 ? result.data[0].data : [];
+        function showDayDDLs(year, month, day) {
+            var ddls = JSON.parse(localStorage.getItem(STORAGE_KEYS.ddls)) || [];
             var dayDDLs = ddls.filter(function(ddl) {
                 var ddlDate = new Date(ddl.time);
                 return ddlDate.getFullYear() === year && 
@@ -1266,53 +1185,32 @@
             document.getElementById('ddl-calendar').innerHTML = ddlList;
         }
 
-        async function addDDL() {
+        function addDDL() {
             var title = document.getElementById('ddl-title').value.trim();
             var time = document.getElementById('ddl-time').value;
             
             if (title && time) {
-                var result = await db.collection('ddls').where({_openid: user.uid}).get();
-                var ddls = result.data.length > 0 ? result.data[0].data : [];
+                var ddls = JSON.parse(localStorage.getItem(STORAGE_KEYS.ddls)) || [];
                 ddls.push({ title: title, time: time });
-                
-                if (result.data.length > 0) {
-                    await db.collection('ddls').doc(result.data[0]._id).update({
-                        data: ddls,
-                        updatedAt: new Date().toISOString()
-                    });
-                } else {
-                    await db.collection('ddls').add({
-                        _openid: user.uid,
-                        data: ddls,
-                        updatedAt: new Date().toISOString()
-                    });
-                }
+                localStorage.setItem(STORAGE_KEYS.ddls, JSON.stringify(ddls));
                 
                 // 清空输入
                 document.getElementById('ddl-title').value = '';
                 document.getElementById('ddl-time').value = '';
                 
-                await renderDDLCalendar();
+                renderDDLCalendar();
                 showNotification('DDL添加成功', 'success');
             } else {
                 showNotification('请填写完整DDL信息', 'error');
             }
         }
 
-        async function deleteDDL(index) {
+        function deleteDDL(index) {
             if (confirm('确定要删除这个DDL吗？')) {
-                var result = await db.collection('ddls').where({_openid: user.uid}).get();
-                var ddls = result.data.length > 0 ? result.data[0].data : [];
+                var ddls = JSON.parse(localStorage.getItem(STORAGE_KEYS.ddls)) || [];
                 ddls.splice(index, 1);
-                
-                if (result.data.length > 0) {
-                    await db.collection('ddls').doc(result.data[0]._id).update({
-                        data: ddls,
-                        updatedAt: new Date().toISOString()
-                    });
-                }
-                
-                await renderDDLCalendar();
+                localStorage.setItem(STORAGE_KEYS.ddls, JSON.stringify(ddls));
+                renderDDLCalendar();
                 showNotification('DDL删除成功', 'success');
             }
         }
@@ -1401,16 +1299,17 @@
                 hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
         }
 
-        async function updateFocusStats(seconds) {
-            var statsResult = await db.collection('focusStats').where({_openid: user.uid}).get();
-            var stats = statsResult.data.length > 0 ? statsResult.data[0] : { today: 0, average30Days: 0 };
+        function updateFocusStats(seconds) {
+            var stats = JSON.parse(localStorage.getItem(STORAGE_KEYS.focusStats)) || {
+                today: 0,
+                average30Days: 0
+            };
             
             // 更新今日专注时长
             stats.today += seconds;
             
             // 更新专注历史
-            var historyResult = await db.collection('focusHistory').where({_openid: user.uid}).get();
-            var history = historyResult.data.length > 0 ? historyResult.data[0].data : [];
+            var history = JSON.parse(localStorage.getItem(STORAGE_KEYS.focusHistory)) || [];
             var today = new Date().toDateString();
             var todayRecord = history.find(function(item) { return item.date === today; });
             
@@ -1429,42 +1328,18 @@
             var total30Days = recentHistory.reduce(function(sum, item) { return sum + item.duration; }, 0);
             stats.average30Days = recentHistory.length > 0 ? Math.round(total30Days / recentHistory.length / 60) : 0;
             
-            // 更新云数据库
-            if (statsResult.data.length > 0) {
-                await db.collection('focusStats').doc(statsResult.data[0]._id).update({
-                    today: stats.today,
-                    average30Days: stats.average30Days,
-                    updatedAt: new Date().toISOString()
-                });
-            } else {
-                await db.collection('focusStats').add({
-                    _openid: user.uid,
-                    today: stats.today,
-                    average30Days: stats.average30Days,
-                    updatedAt: new Date().toISOString()
-                });
-            }
+            localStorage.setItem(STORAGE_KEYS.focusStats, JSON.stringify(stats));
+            localStorage.setItem(STORAGE_KEYS.focusHistory, JSON.stringify(recentHistory));
             
-            if (historyResult.data.length > 0) {
-                await db.collection('focusHistory').doc(historyResult.data[0]._id).update({
-                    data: recentHistory,
-                    updatedAt: new Date().toISOString()
-                });
-            } else {
-                await db.collection('focusHistory').add({
-                    _openid: user.uid,
-                    data: recentHistory,
-                    updatedAt: new Date().toISOString()
-                });
-            }
-            
-            await loadFocusStats();
-            await loadFocusHistory();
+            loadFocusStats();
+            renderFocusChart(recentHistory);
         }
 
-        async function loadFocusStats() {
-            var result = await db.collection('focusStats').where({_openid: user.uid}).get();
-            var stats = result.data.length > 0 ? result.data[0] : { today: 0, average30Days: 0 };
+        function loadFocusStats() {
+            var stats = JSON.parse(localStorage.getItem(STORAGE_KEYS.focusStats)) || {
+                today: 0,
+                average30Days: 0
+            };
             
             var statsElement = document.getElementById('focus-stats');
             statsElement.innerHTML = [
@@ -1511,9 +1386,8 @@
         }
 
         // 学习资源功能
-        async function loadResources(filter = 'all') {
-            var result = await db.collection('resources').where({_openid: user.uid}).get();
-            var resources = result.data.length > 0 ? result.data[0].data : [];
+        function loadResources(filter = 'all') {
+            var resources = JSON.parse(localStorage.getItem(STORAGE_KEYS.resources)) || [];
             var resourceList = document.getElementById('resource-list');
             resourceList.innerHTML = '';
             
@@ -1538,129 +1412,82 @@
             });
         }
         
-        async function filterResources() {
+        function filterResources() {
             var filter = document.getElementById('resource-filter').value;
-            await loadResources(filter);
+            loadResources(filter);
         }
 
-        async function addResource() {
+        function addResource() {
             var name = document.getElementById('resource-name').value.trim();
             var url = document.getElementById('resource-url').value.trim();
             var platform = document.getElementById('resource-platform').value;
             
             if (name && url) {
-                var result = await db.collection('resources').where({_openid: user.uid}).get();
-                var resources = result.data.length > 0 ? result.data[0].data : [];
+                var resources = JSON.parse(localStorage.getItem(STORAGE_KEYS.resources)) || [];
                 resources.push({ name: name, url: url, platform: platform, added: new Date().toISOString() });
-                
-                if (result.data.length > 0) {
-                    await db.collection('resources').doc(result.data[0]._id).update({
-                        data: resources,
-                        updatedAt: new Date().toISOString()
-                    });
-                } else {
-                    await db.collection('resources').add({
-                        _openid: user.uid,
-                        data: resources,
-                        updatedAt: new Date().toISOString()
-                    });
-                }
+                localStorage.setItem(STORAGE_KEYS.resources, JSON.stringify(resources));
                 
                 // 清空输入
                 document.getElementById('resource-name').value = '';
                 document.getElementById('resource-url').value = '';
                 
-                await loadResources();
+                loadResources();
                 showNotification('资源添加成功', 'success');
             } else {
                 showNotification('请填写完整资源信息', 'error');
             }
         }
 
-        async function deleteResource(index) {
+        function deleteResource(index) {
             if (confirm('确定要删除这个资源吗？')) {
-                var result = await db.collection('resources').where({_openid: user.uid}).get();
-                var resources = result.data.length > 0 ? result.data[0].data : [];
+                var resources = JSON.parse(localStorage.getItem(STORAGE_KEYS.resources)) || [];
                 resources.splice(index, 1);
-                
-                if (result.data.length > 0) {
-                    await db.collection('resources').doc(result.data[0]._id).update({
-                        data: resources,
-                        updatedAt: new Date().toISOString()
-                    });
-                }
-                
-                await loadResources();
+                localStorage.setItem(STORAGE_KEYS.resources, JSON.stringify(resources));
+                loadResources();
                 showNotification('资源删除成功', 'success');
             }
         }
 
         // 鸡汤模块功能
-        async function loadMotivation() {
-            var result = await db.collection('motivations').where({_openid: user.uid}).get();
-            var motivations = result.data.length > 0 ? result.data[0].data : [];
+        function loadMotivation() {
+            var motivations = JSON.parse(localStorage.getItem(STORAGE_KEYS.motivations)) || [];
             if (motivations.length > 0) {
                 var randomIndex = Math.floor(Math.random() * motivations.length);
                 document.getElementById('motivation-content').textContent = motivations[randomIndex];
             }
         }
 
-        async function refreshMotivation() {
-            await loadMotivation();
+        function refreshMotivation() {
+            loadMotivation();
             showNotification('鸡汤已刷新', 'success');
         }
 
-        async function addMotivation() {
+        function addMotivation() {
             var input = document.getElementById('motivation-input');
             var text = input.value.trim();
             
             if (text) {
-                var result = await db.collection('motivations').where({_openid: user.uid}).get();
-                var motivations = result.data.length > 0 ? result.data[0].data : [];
+                var motivations = JSON.parse(localStorage.getItem(STORAGE_KEYS.motivations)) || [];
                 motivations.push(text);
-                
-                if (result.data.length > 0) {
-                    await db.collection('motivations').doc(result.data[0]._id).update({
-                        data: motivations,
-                        updatedAt: new Date().toISOString()
-                    });
-                } else {
-                    await db.collection('motivations').add({
-                        _openid: user.uid,
-                        data: motivations,
-                        updatedAt: new Date().toISOString()
-                    });
-                }
-                
+                localStorage.setItem(STORAGE_KEYS.motivations, JSON.stringify(motivations));
                 input.value = '';
                 showNotification('鸡汤添加成功', 'success');
-                await loadMotivation();
+                loadMotivation();
             }
         }
 
         // 数据同步功能
-        async function exportData() {
-            // 从云数据库获取所有数据
-            var todosResult = await db.collection('todos').where({_openid: user.uid}).get();
-            var longTodosResult = await db.collection('longTodos').where({_openid: user.uid}).get();
-            var completedTodosResult = await db.collection('completedTodos').where({_openid: user.uid}).get();
-            var ddlsResult = await db.collection('ddls').where({_openid: user.uid}).get();
-            var resourcesResult = await db.collection('resources').where({_openid: user.uid}).get();
-            var focusStatsResult = await db.collection('focusStats').where({_openid: user.uid}).get();
-            var focusHistoryResult = await db.collection('focusHistory').where({_openid: user.uid}).get();
-            var motivationsResult = await db.collection('motivations').where({_openid: user.uid}).get();
-            var notesResult = await db.collection('notes').where({_openid: user.uid}).get();
-            
+        function exportData() {
             var data = {
-                todos: todosResult.data.length > 0 ? todosResult.data[0].data : [],
-                longTodos: longTodosResult.data.length > 0 ? longTodosResult.data[0].data : [],
-                completedTodos: completedTodosResult.data.length > 0 ? completedTodosResult.data[0].data : [],
-                ddls: ddlsResult.data.length > 0 ? ddlsResult.data[0].data : [],
-                resources: resourcesResult.data.length > 0 ? resourcesResult.data[0].data : [],
-                focusStats: focusStatsResult.data.length > 0 ? focusStatsResult.data[0] : {},
-                focusHistory: focusHistoryResult.data.length > 0 ? focusHistoryResult.data[0].data : [],
-                motivations: motivationsResult.data.length > 0 ? motivationsResult.data[0].data : [],
-                notes: notesResult.data.length > 0 ? notesResult.data[0].data : [],
+                todos: JSON.parse(localStorage.getItem(STORAGE_KEYS.todos)) || [],
+                longTodos: JSON.parse(localStorage.getItem(STORAGE_KEYS.longTodos)) || [],
+                completedTodos: JSON.parse(localStorage.getItem(STORAGE_KEYS.completedTodos)) || [],
+                ddls: JSON.parse(localStorage.getItem(STORAGE_KEYS.ddls)) || [],
+                resources: JSON.parse(localStorage.getItem(STORAGE_KEYS.resources)) || [],
+                focusStats: JSON.parse(localStorage.getItem(STORAGE_KEYS.focusStats)) || {},
+                focusHistory: JSON.parse(localStorage.getItem(STORAGE_KEYS.focusHistory)) || [],
+                motivations: JSON.parse(localStorage.getItem(STORAGE_KEYS.motivations)) || [],
+                notes: JSON.parse(localStorage.getItem(STORAGE_KEYS.notes)) || [],
                 exportDate: new Date().toISOString()
             };
             var dataStr = JSON.stringify(data, null, 2);
@@ -1668,7 +1495,7 @@
             showNotification('数据导出成功', 'success');
         }
 
-        async function importData() {
+        function importData() {
             var dataStr = document.getElementById('data-export').value;
             if (!dataStr) {
                 showNotification('请先粘贴数据到文本框', 'error');
@@ -1679,162 +1506,26 @@
                 var data = JSON.parse(dataStr);
                 
                 // 导入所有数据
-                if (data.todos) {
-                    var todosResult = await db.collection('todos').where({_openid: user.uid}).get();
-                    if (todosResult.data.length > 0) {
-                        await db.collection('todos').doc(todosResult.data[0]._id).update({
-                            data: data.todos,
-                            updatedAt: new Date().toISOString()
-                        });
-                    } else {
-                        await db.collection('todos').add({
-                            _openid: user.uid,
-                            data: data.todos,
-                            updatedAt: new Date().toISOString()
-                        });
-                    }
-                }
-                
-                if (data.longTodos) {
-                    var longTodosResult = await db.collection('longTodos').where({_openid: user.uid}).get();
-                    if (longTodosResult.data.length > 0) {
-                        await db.collection('longTodos').doc(longTodosResult.data[0]._id).update({
-                            data: data.longTodos,
-                            updatedAt: new Date().toISOString()
-                        });
-                    } else {
-                        await db.collection('longTodos').add({
-                            _openid: user.uid,
-                            data: data.longTodos,
-                            updatedAt: new Date().toISOString()
-                        });
-                    }
-                }
-                
-                if (data.completedTodos) {
-                    var completedTodosResult = await db.collection('completedTodos').where({_openid: user.uid}).get();
-                    if (completedTodosResult.data.length > 0) {
-                        await db.collection('completedTodos').doc(completedTodosResult.data[0]._id).update({
-                            data: data.completedTodos,
-                            updatedAt: new Date().toISOString()
-                        });
-                    } else {
-                        await db.collection('completedTodos').add({
-                            _openid: user.uid,
-                            data: data.completedTodos,
-                            updatedAt: new Date().toISOString()
-                        });
-                    }
-                }
-                
-                if (data.ddls) {
-                    var ddlsResult = await db.collection('ddls').where({_openid: user.uid}).get();
-                    if (ddlsResult.data.length > 0) {
-                        await db.collection('ddls').doc(ddlsResult.data[0]._id).update({
-                            data: data.ddls,
-                            updatedAt: new Date().toISOString()
-                        });
-                    } else {
-                        await db.collection('ddls').add({
-                            _openid: user.uid,
-                            data: data.ddls,
-                            updatedAt: new Date().toISOString()
-                        });
-                    }
-                }
-                
-                if (data.resources) {
-                    var resourcesResult = await db.collection('resources').where({_openid: user.uid}).get();
-                    if (resourcesResult.data.length > 0) {
-                        await db.collection('resources').doc(resourcesResult.data[0]._id).update({
-                            data: data.resources,
-                            updatedAt: new Date().toISOString()
-                        });
-                    } else {
-                        await db.collection('resources').add({
-                            _openid: user.uid,
-                            data: data.resources,
-                            updatedAt: new Date().toISOString()
-                        });
-                    }
-                }
-                
-                if (data.focusStats) {
-                    var focusStatsResult = await db.collection('focusStats').where({_openid: user.uid}).get();
-                    if (focusStatsResult.data.length > 0) {
-                        await db.collection('focusStats').doc(focusStatsResult.data[0]._id).update({
-                            today: data.focusStats.today,
-                            average30Days: data.focusStats.average30Days,
-                            updatedAt: new Date().toISOString()
-                        });
-                    } else {
-                        await db.collection('focusStats').add({
-                            _openid: user.uid,
-                            today: data.focusStats.today,
-                            average30Days: data.focusStats.average30Days,
-                            updatedAt: new Date().toISOString()
-                        });
-                    }
-                }
-                
-                if (data.focusHistory) {
-                    var focusHistoryResult = await db.collection('focusHistory').where({_openid: user.uid}).get();
-                    if (focusHistoryResult.data.length > 0) {
-                        await db.collection('focusHistory').doc(focusHistoryResult.data[0]._id).update({
-                            data: data.focusHistory,
-                            updatedAt: new Date().toISOString()
-                        });
-                    } else {
-                        await db.collection('focusHistory').add({
-                            _openid: user.uid,
-                            data: data.focusHistory,
-                            updatedAt: new Date().toISOString()
-                        });
-                    }
-                }
-                
-                if (data.motivations) {
-                    var motivationsResult = await db.collection('motivations').where({_openid: user.uid}).get();
-                    if (motivationsResult.data.length > 0) {
-                        await db.collection('motivations').doc(motivationsResult.data[0]._id).update({
-                            data: data.motivations,
-                            updatedAt: new Date().toISOString()
-                        });
-                    } else {
-                        await db.collection('motivations').add({
-                            _openid: user.uid,
-                            data: data.motivations,
-                            updatedAt: new Date().toISOString()
-                        });
-                    }
-                }
-                
-                if (data.notes) {
-                    var notesResult = await db.collection('notes').where({_openid: user.uid}).get();
-                    if (notesResult.data.length > 0) {
-                        await db.collection('notes').doc(notesResult.data[0]._id).update({
-                            data: data.notes,
-                            updatedAt: new Date().toISOString()
-                        });
-                    } else {
-                        await db.collection('notes').add({
-                            _openid: user.uid,
-                            data: data.notes,
-                            updatedAt: new Date().toISOString()
-                        });
-                    }
-                }
+                if (data.todos) localStorage.setItem(STORAGE_KEYS.todos, JSON.stringify(data.todos));
+                if (data.longTodos) localStorage.setItem(STORAGE_KEYS.longTodos, JSON.stringify(data.longTodos));
+                if (data.completedTodos) localStorage.setItem(STORAGE_KEYS.completedTodos, JSON.stringify(data.completedTodos));
+                if (data.ddls) localStorage.setItem(STORAGE_KEYS.ddls, JSON.stringify(data.ddls));
+                if (data.resources) localStorage.setItem(STORAGE_KEYS.resources, JSON.stringify(data.resources));
+                if (data.focusStats) localStorage.setItem(STORAGE_KEYS.focusStats, JSON.stringify(data.focusStats));
+                if (data.focusHistory) localStorage.setItem(STORAGE_KEYS.focusHistory, JSON.stringify(data.focusHistory));
+                if (data.motivations) localStorage.setItem(STORAGE_KEYS.motivations, JSON.stringify(data.motivations));
+                if (data.notes) localStorage.setItem(STORAGE_KEYS.notes, JSON.stringify(data.notes));
                 
                 // 重新加载所有数据
-                await loadTodos();
-                await loadLongTodos();
-                await loadCompletedTodos();
-                await renderDDLCalendar();
-                await loadResources();
-                await loadFocusStats();
-                await loadFocusHistory();
-                await loadMotivation();
-                await loadNotes();
+                loadTodos();
+                loadLongTodos();
+                loadCompletedTodos();
+                renderDDLCalendar();
+                loadResources();
+                loadFocusStats();
+                renderFocusChart(JSON.parse(localStorage.getItem(STORAGE_KEYS.focusHistory)) || []);
+                loadMotivation();
+                loadNotes();
                 
                 showNotification('数据导入成功', 'success');
             } catch (e) {
@@ -1873,34 +1564,23 @@
             }
         }
 
-        async function clearData() {
+        function clearData() {
             if (confirm('确定要清空所有数据吗？此操作不可恢复！')) {
-                // 清空云数据库中的所有数据
-                var collections = [
-                    'todos', 'longTodos', 'completedTodos', 'ddls', 
-                    'resources', 'focusStats', 'focusHistory', 'motivations', 'notes'
-                ];
-                
-                for (var i = 0; i < collections.length; i++) {
-                    var collection = collections[i];
-                    var result = await db.collection(collection).where({_openid: user.uid}).get();
-                    for (var j = 0; j < result.data.length; j++) {
-                        await db.collection(collection).doc(result.data[j]._id).remove();
-                    }
-                }
-                
-                await initData();
+                Object.values(STORAGE_KEYS).forEach(function(key) {
+                    localStorage.removeItem(key);
+                });
+                initData();
                 
                 // 重新加载所有数据
-                await loadTodos();
-                await loadLongTodos();
-                await loadCompletedTodos();
-                await renderDDLCalendar();
-                await loadResources();
-                await loadFocusStats();
-                await loadFocusHistory();
-                await loadMotivation();
-                await loadNotes();
+                loadTodos();
+                loadLongTodos();
+                loadCompletedTodos();
+                renderDDLCalendar();
+                loadResources();
+                loadFocusStats();
+                renderFocusChart([]);
+                loadMotivation();
+                loadNotes();
                 
                 document.getElementById('data-export').value = '';
                 showNotification('所有数据已清空', 'success');
@@ -1908,9 +1588,8 @@
         }
 
         // 加载完成待办事项
-        async function loadCompletedTodos() {
-            var result = await db.collection('completedTodos').where({_openid: user.uid}).get();
-            var completedTodos = result.data.length > 0 ? result.data[0].data : [];
+        function loadCompletedTodos() {
+            var completedTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.completedTodos)) || [];
             var completedTodoList = document.getElementById('completed-todo-list');
             completedTodoList.innerHTML = '';
             
@@ -1953,28 +1632,19 @@
         }
 
         // 删除完成待办事项
-        async function deleteCompletedTodo(index) {
+        function deleteCompletedTodo(index) {
             if (confirm('确定要删除这个完成的任务吗？')) {
-                var result = await db.collection('completedTodos').where({_openid: user.uid}).get();
-                var completedTodos = result.data.length > 0 ? result.data[0].data : [];
+                var completedTodos = JSON.parse(localStorage.getItem(STORAGE_KEYS.completedTodos)) || [];
                 completedTodos.splice(index, 1);
-                
-                if (result.data.length > 0) {
-                    await db.collection('completedTodos').doc(result.data[0]._id).update({
-                        data: completedTodos,
-                        updatedAt: new Date().toISOString()
-                    });
-                }
-                
-                await loadCompletedTodos();
+                localStorage.setItem(STORAGE_KEYS.completedTodos, JSON.stringify(completedTodos));
+                loadCompletedTodos();
                 showNotification('任务删除成功', 'success');
             }
         }
 
         // 备忘录功能
-        async function loadNotes() {
-            var result = await db.collection('notes').where({_openid: user.uid}).get();
-            var notes = result.data.length > 0 ? result.data[0].data : [];
+        function loadNotes() {
+            var notes = JSON.parse(localStorage.getItem(STORAGE_KEYS.notes)) || [];
             var noteList = document.getElementById('note-list');
             noteList.innerHTML = '';
             
@@ -1994,42 +1664,28 @@
             });
         }
 
-        async function addNote() {
+        function addNote() {
             var title = document.getElementById('note-title').value.trim();
             var content = document.getElementById('note-content').value.trim();
             
             if (title && content) {
-                var result = await db.collection('notes').where({_openid: user.uid}).get();
-                var notes = result.data.length > 0 ? result.data[0].data : [];
+                var notes = JSON.parse(localStorage.getItem(STORAGE_KEYS.notes)) || [];
                 notes.push({ title: title, content: content, created: new Date().toISOString() });
-                
-                if (result.data.length > 0) {
-                    await db.collection('notes').doc(result.data[0]._id).update({
-                        data: notes,
-                        updatedAt: new Date().toISOString()
-                    });
-                } else {
-                    await db.collection('notes').add({
-                        _openid: user.uid,
-                        data: notes,
-                        updatedAt: new Date().toISOString()
-                    });
-                }
+                localStorage.setItem(STORAGE_KEYS.notes, JSON.stringify(notes));
                 
                 // 清空输入
                 document.getElementById('note-title').value = '';
                 document.getElementById('note-content').value = '';
                 
-                await loadNotes();
+                loadNotes();
                 showNotification('备忘录添加成功', 'success');
             } else {
                 showNotification('请填写完整备忘录信息', 'error');
             }
         }
 
-        async function editNote(index) {
-            var result = await db.collection('notes').where({_openid: user.uid}).get();
-            var notes = result.data.length > 0 ? result.data[0].data : [];
+        function editNote(index) {
+            var notes = JSON.parse(localStorage.getItem(STORAGE_KEYS.notes)) || [];
             var note = notes[index];
             var newTitle = prompt('编辑标题:', note.title);
             var newContent = prompt('编辑内容:', note.content);
@@ -2037,33 +1693,18 @@
             if (newTitle !== null && newContent !== null) {
                 notes[index].title = newTitle.trim();
                 notes[index].content = newContent.trim();
-                
-                if (result.data.length > 0) {
-                    await db.collection('notes').doc(result.data[0]._id).update({
-                        data: notes,
-                        updatedAt: new Date().toISOString()
-                    });
-                }
-                
-                await loadNotes();
+                localStorage.setItem(STORAGE_KEYS.notes, JSON.stringify(notes));
+                loadNotes();
                 showNotification('备忘录更新成功', 'success');
             }
         }
 
-        async function deleteNote(index) {
+        function deleteNote(index) {
             if (confirm('确定要删除这个备忘录吗？')) {
-                var result = await db.collection('notes').where({_openid: user.uid}).get();
-                var notes = result.data.length > 0 ? result.data[0].data : [];
+                var notes = JSON.parse(localStorage.getItem(STORAGE_KEYS.notes)) || [];
                 notes.splice(index, 1);
-                
-                if (result.data.length > 0) {
-                    await db.collection('notes').doc(result.data[0]._id).update({
-                        data: notes,
-                        updatedAt: new Date().toISOString()
-                    });
-                }
-                
-                await loadNotes();
+                localStorage.setItem(STORAGE_KEYS.notes, JSON.stringify(notes));
+                loadNotes();
                 showNotification('备忘录删除成功', 'success');
             }
         }
@@ -2087,25 +1728,18 @@
         }
 
         // 初始化
-        document.addEventListener('DOMContentLoaded', async function() {
-            await initData();
-            await loadTodos();
-            await loadLongTodos();
-            await loadCompletedTodos();
-            await renderDDLCalendar();
-            await loadResources();
-            await loadFocusStats();
-            await loadFocusHistory();
-            await loadMotivation();
-            await loadNotes();
+        document.addEventListener('DOMContentLoaded', function() {
+            initData();
+            loadTodos();
+            loadLongTodos();
+            loadCompletedTodos();
+            renderDDLCalendar();
+            loadResources();
+            loadFocusStats();
+            renderFocusChart(JSON.parse(localStorage.getItem(STORAGE_KEYS.focusHistory)) || []);
+            loadMotivation();
+            loadNotes();
         });
-        
-        // 加载专注历史数据
-        async function loadFocusHistory() {
-            var result = await db.collection('focusHistory').where({_openid: user.uid}).get();
-            var history = result.data.length > 0 ? result.data[0].data : [];
-            renderFocusChart(history);
-        }
     </script>
 </body>
 </html>
