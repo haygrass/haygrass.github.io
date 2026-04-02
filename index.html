@@ -1338,8 +1338,17 @@
         function loadFocusStats() {
             var stats = JSON.parse(localStorage.getItem(STORAGE_KEYS.focusStats)) || {
                 today: 0,
-                average30Days: 0
+                average30Days: 0,
+                lastUpdated: new Date().toDateString()
             };
+            
+            // 检查是否是新的一天，如果是，重置今日专注时长
+            var today = new Date().toDateString();
+            if (stats.lastUpdated !== today) {
+                stats.today = 0;
+                stats.lastUpdated = today;
+                localStorage.setItem(STORAGE_KEYS.focusStats, JSON.stringify(stats));
+            }
             
             var statsElement = document.getElementById('focus-stats');
             statsElement.innerHTML = [
